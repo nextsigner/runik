@@ -49,6 +49,21 @@ HEADERS += \
     unikargsproc.h \
     unikqprocess.h
 
+
+###-----QUAZIP----->###
+# Añade core5compat a los módulos de Qt requeridos
+QT += core gui
+
+INCLUDEPATH += /usr/local/zlib/include
+INCLUDEPATH += $$PWD/quazip   # <-- Importante para que los .cpp encuentren los headers internos
+INCLUDEPATH += $$PWD/quazip
+HEADERS += $$PWD/quazip/*.h
+
+HEADERS += $$PWD/quazip/*.h
+SOURCES += $$PWD/quazip/*.cpp
+SOURCES += $$PWD/quazip/*.c
+###<-----QUAZIP-----###
+
 DISTFILES += \
     android/AndroidManifest.xml \
     android/build.gradle \

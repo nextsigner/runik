@@ -10,6 +10,7 @@ Window {
     title: "Runik"
     color: apps.backgroundColor
     property int fs: width*0.035
+    property var uAppsList: []
     Settings{
         id: apps
         property color backgroundColor: 'black'
@@ -48,6 +49,18 @@ Window {
                 text: "Cargar"
                 font.pixelSize: app.fs
                 anchors.horizontalCenter: parent.horizontalCenter
+                onClicked: {
+                    for(var i=0;i<app.uAppsList.length;i++){
+                        let linea=app.uAppsList[i]
+                        if(linea.length>3){
+                            let args=linea.split(' ')
+                            if(args[0]===tiAppId.text){
+                                statusText.text=getGitHubZipUrl(args[2])
+                            }
+                        }
+                    }
+
+                }
             }
             Text{
                 id: statusText
@@ -92,6 +105,7 @@ Window {
                 //textArea.text = data;
                 statusText.text = "¡Archivo cargado con éxito!";
                 statusText.text+='\n'+data
+                app.uAppsList=data.split('\n')
             } else {
                 statusText.text = data; // Muestra el mensaje de error
             }
@@ -114,5 +128,36 @@ Window {
             }
         }
         xhr.send();
+    }
+    function getGitHubZipUrl(repoUrl) {
+        if (!repoUrl || typeof repoUrl !== "string") {
+            return "";
+        }
+
+        // Limpiamos espacios y removemos una barra diagonal al final si existe
+        let cleanUrl = repoUrl.trim();
+        if (cleanUrl.endsWith("/")) {
+            cleanUrl = cleanUrl.slice(0, -1);
+        }
+
+        // Si la URL ya termina en .git, se lo removemos
+        if (cleanUrl.endsWith(".git")) {
+            cleanUrl = cleanUrl.slice(0, -4);
+        }
+
+        // Verificamos si es una URL válida de GitHub (ej: https://github.com/usuario/repositorio)
+        const regex = /^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)$/i;
+        const match = cleanUrl.match(regex);
+
+        if (match) {
+            const owner = match[1];
+            const repo = match[2];
+            // Retorna la URL estándar del zip de la rama principal (main)
+            return "https://github.com/" + owner + "/" + repo + "/archive/refs/heads/main.zip";
+        }
+
+        // Si la URL ya es más específica (ej. incluye /tree/main o /blob/main), la adaptamos
+        // O si no coincide con el formato básico, devolvemos cadena vacía o intentamos parsear
+        return "";
     }
 }
