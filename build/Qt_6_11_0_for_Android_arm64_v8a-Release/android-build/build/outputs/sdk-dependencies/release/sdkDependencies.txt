@@ -304,6 +304,11 @@ library {
 }
 library {
   digests {
+    sha256: "\355r\367\254\303\203.,\256 \362i\2248?\035e\v\374\333\305L\272FI\034?W\244\360\203\221"
+  }
+}
+library {
+  digests {
     sha256: "\264%\306Yy\213\370~)\266#q\236a\025\255\003I\274]P9X\211X\273\b\204\223\376\352\356"
   }
 }
@@ -450,6 +455,7 @@ module_dependencies {
   dependency_index: 26
   dependency_index: 27
   dependency_index: 28
+  dependency_index: 29
 }
 repositories {
   maven_repo {

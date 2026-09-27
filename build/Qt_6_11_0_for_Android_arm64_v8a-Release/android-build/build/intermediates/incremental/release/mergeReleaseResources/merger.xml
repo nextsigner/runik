@@ -121,16 +121,28 @@
         <item>arm64-v8a;c++_shared</item>
         <item>arm64-v8a;Qt6Core_arm64-v8a</item>
         <item>arm64-v8a;Qt6Gui_arm64-v8a</item>
+        <item>arm64-v8a;Qt6Concurrent_arm64-v8a</item>
         <item>arm64-v8a;Qt6Network_arm64-v8a</item>
+        <item>arm64-v8a;Qt6Multimedia_arm64-v8a</item>
         <item>arm64-v8a;Qt6OpenGL_arm64-v8a</item>
         <item>arm64-v8a;Qt6Qml_arm64-v8a</item>
         <item>arm64-v8a;Qt6QmlModels_arm64-v8a</item>
         <item>arm64-v8a;Qt6QmlWorkerScript_arm64-v8a</item>
         <item>arm64-v8a;Qt6QmlMeta_arm64-v8a</item>
         <item>arm64-v8a;Qt6Quick_arm64-v8a</item>
+        <item>arm64-v8a;Qt6Quick3DUtils_arm64-v8a</item>
+        <item>arm64-v8a;Qt6ShaderTools_arm64-v8a</item>
+        <item>arm64-v8a;Qt6Quick3DRuntimeRender_arm64-v8a</item>
+        <item>arm64-v8a;Qt6Quick3D_arm64-v8a</item>
         <item>arm64-v8a;Qt6Sql_arm64-v8a</item>
         <item>arm64-v8a;Qt6Svg_arm64-v8a</item>
-        <item>arm64-v8a;Qt6Quick3DUtils_arm64-v8a</item>
+        <item>arm64-v8a;avutil</item>
+        <item>arm64-v8a;swresample</item>
+        <item>arm64-v8a;avcodec</item>
+        <item>arm64-v8a;Qt6FFmpegStub-crypto_arm64-v8a</item>
+        <item>arm64-v8a;Qt6FFmpegStub-ssl_arm64-v8a</item>
+        <item>arm64-v8a;avformat</item>
+        <item>arm64-v8a;swscale</item>
         <item>arm64-v8a;Qt6QuickTemplates2_arm64-v8a</item>
         <item>arm64-v8a;Qt6QuickControls2Impl_arm64-v8a</item>
         <item>arm64-v8a;Qt6QuickControls2_arm64-v8a</item>
@@ -150,7 +162,7 @@
         <item>arm64-v8a;Qt6QuickShapes_arm64-v8a</item>
         <item>arm64-v8a;Qt6QmlCore_arm64-v8a</item>
     </array><array name="load_local_libs">
-        <item>arm64-v8a;libplugins_platforms_qtforandroid_arm64-v8a.so</item>
+        <item>arm64-v8a;libplugins_platforms_qtforandroid_arm64-v8a.so:libplugins_multimedia_ffmpegmediaplugin_arm64-v8a.so:libplugins_multimedia_androidmediaplugin_arm64-v8a.so</item>
     </array><string name="use_local_qt_libs">1</string><string name="bundle_local_qt_libs">1</string><string name="system_libs_prefix"/></file><file name="ic_launcher" path="/home/ns/nsp/runik/build/Qt_6_11_0_for_Android_arm64_v8a-Release/android-build/res/mipmap-xxhdpi/ic_launcher.png" qualifiers="xxhdpi-v4" type="mipmap"/><file name="ic_launcher" path="/home/ns/nsp/runik/build/Qt_6_11_0_for_Android_arm64_v8a-Release/android-build/res/mipmap-hdpi/ic_launcher.png" qualifiers="hdpi-v4" type="mipmap"/><file name="qtprovider_paths" path="/home/ns/nsp/runik/build/Qt_6_11_0_for_Android_arm64_v8a-Release/android-build/res/xml/qtprovider_paths.xml" qualifiers="" type="xml"/></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="release$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/ns/nsp/runik/build/Qt_6_11_0_for_Android_arm64_v8a-Release/android-build/src/release/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="release" generated-set="release$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~:!&lt;dir>navigation"><source path="/home/ns/nsp/runik/build/Qt_6_11_0_for_Android_arm64_v8a-Release/android-build/src/release/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"/><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~:!&lt;dir>navigation"/><mergedItems><configuration qualifiers=""><declare-styleable name="FontFamilyFont">
         
         <attr name="fontStyle">

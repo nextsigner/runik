@@ -4,6 +4,10 @@
       jars="/home/ns/nsp/runik/build/Qt_6_11_0_for_Android_arm64_v8a-Release/android-build/libs/Qt6AndroidQuick.jar"
       resolved="__local_aars__:/home/ns/nsp/runik/build/Qt_6_11_0_for_Android_arm64_v8a-Release/android-build/libs/Qt6AndroidQuick.jar:unspecified"/>
   <library
+      name="__local_aars__:/home/ns/nsp/runik/build/Qt_6_11_0_for_Android_arm64_v8a-Release/android-build/libs/Qt6AndroidMultimedia.jar:unspecified@jar"
+      jars="/home/ns/nsp/runik/build/Qt_6_11_0_for_Android_arm64_v8a-Release/android-build/libs/Qt6AndroidMultimedia.jar"
+      resolved="__local_aars__:/home/ns/nsp/runik/build/Qt_6_11_0_for_Android_arm64_v8a-Release/android-build/libs/Qt6AndroidMultimedia.jar:unspecified"/>
+  <library
       name="__local_aars__:/home/ns/nsp/runik/build/Qt_6_11_0_for_Android_arm64_v8a-Release/android-build/libs/Qt6Android.jar:unspecified@jar"
       jars="/home/ns/nsp/runik/build/Qt_6_11_0_for_Android_arm64_v8a-Release/android-build/libs/Qt6Android.jar"
       resolved="__local_aars__:/home/ns/nsp/runik/build/Qt_6_11_0_for_Android_arm64_v8a-Release/android-build/libs/Qt6Android.jar:unspecified"/>
