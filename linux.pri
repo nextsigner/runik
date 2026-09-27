@@ -1,3 +1,5 @@
+LIBS += -lz
+
 # --- Configuración de Swiss Ephemeris para Android ---
 
 # 1. Ruta de los encabezados (donde están los .h)

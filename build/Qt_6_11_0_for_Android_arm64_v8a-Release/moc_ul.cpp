@@ -49,6 +49,12 @@ template <> constexpr inline auto UL::qt_create_metaobjectdata<qt_meta_tag_ZN2UL
         "stdErrChanged",
         "debugLogChanged",
         "runCLChanged",
+        "downloadProgress",
+        "bytesReceived",
+        "bytesTotal",
+        "downloadFinished",
+        "success",
+        "filePath",
         "encPrivateData",
         "d",
         "user",
@@ -153,6 +159,11 @@ template <> constexpr inline auto UL::qt_create_metaobjectdata<qt_meta_tag_ZN2UL
         "isRPI",
         "getHttpFile",
         "url",
+        "downloadGitHubZip",
+        "outputFileName",
+        "uncompressZip",
+        "zipFilePath",
+        "destinationDir",
         "sendFile",
         "file",
         "phpReceiver",
@@ -183,255 +194,275 @@ template <> constexpr inline auto UL::qt_create_metaobjectdata<qt_meta_tag_ZN2UL
         QtMocHelpers::SignalData<void()>(8, 2, QMC::AccessPublic, QMetaType::Void),
         // Signal 'runCLChanged'
         QtMocHelpers::SignalData<void()>(9, 2, QMC::AccessPublic, QMetaType::Void),
+        // Signal 'downloadProgress'
+        QtMocHelpers::SignalData<void(qint64, qint64)>(10, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::LongLong, 11 }, { QMetaType::LongLong, 12 },
+        }}),
+        // Signal 'downloadFinished'
+        QtMocHelpers::SignalData<void(bool, QString)>(13, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Bool, 14 }, { QMetaType::QString, 15 },
+        }}),
         // Slot 'encPrivateData'
-        QtMocHelpers::SlotData<QString(QByteArray, QString, QString)>(10, 2, QMC::AccessPrivate, QMetaType::QString, {{
-            { QMetaType::QByteArray, 11 }, { QMetaType::QString, 12 }, { QMetaType::QString, 13 },
+        QtMocHelpers::SlotData<QString(QByteArray, QString, QString)>(16, 2, QMC::AccessPrivate, QMetaType::QString, {{
+            { QMetaType::QByteArray, 17 }, { QMetaType::QString, 18 }, { QMetaType::QString, 19 },
         }}),
         // Slot 'decPrivateData'
-        QtMocHelpers::SlotData<QString(QByteArray, QString, QString)>(14, 2, QMC::AccessPrivate, QMetaType::QString, {{
-            { QMetaType::QByteArray, 15 }, { QMetaType::QString, 12 }, { QMetaType::QString, 13 },
+        QtMocHelpers::SlotData<QString(QByteArray, QString, QString)>(20, 2, QMC::AccessPrivate, QMetaType::QString, {{
+            { QMetaType::QByteArray, 21 }, { QMetaType::QString, 18 }, { QMetaType::QString, 19 },
         }}),
         // Slot 'compData'
-        QtMocHelpers::SlotData<QString(QString)>(16, 2, QMC::AccessPrivate, QMetaType::QString, {{
-            { QMetaType::QString, 11 },
+        QtMocHelpers::SlotData<QString(QString)>(22, 2, QMC::AccessPrivate, QMetaType::QString, {{
+            { QMetaType::QString, 17 },
         }}),
         // Slot 'desCompData'
-        QtMocHelpers::SlotData<QString(QString)>(17, 2, QMC::AccessPrivate, QMetaType::QString, {{
-            { QMetaType::QString, 11 },
+        QtMocHelpers::SlotData<QString(QString)>(23, 2, QMC::AccessPrivate, QMetaType::QString, {{
+            { QMetaType::QString, 17 },
         }}),
         // Method 'setStdErr'
-        QtMocHelpers::MethodData<void(QString)>(18, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::QString, 19 },
+        QtMocHelpers::MethodData<void(QString)>(24, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QString, 25 },
         }}),
         // Method 'getInitStdString'
-        QtMocHelpers::MethodData<QString()>(20, 2, QMC::AccessPrivate, QMetaType::QString),
+        QtMocHelpers::MethodData<QString()>(26, 2, QMC::AccessPrivate, QMetaType::QString),
         // Method 'setInitStdString'
-        QtMocHelpers::MethodData<void(QString)>(21, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::QString, 19 },
+        QtMocHelpers::MethodData<void(QString)>(27, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QString, 25 },
         }}),
         // Method 'setDebugLog'
-        QtMocHelpers::MethodData<void(bool)>(22, 2, QMC::AccessPrivate, QMetaType::Void, {{
-            { QMetaType::Bool, 23 },
+        QtMocHelpers::MethodData<void(bool)>(28, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::Bool, 29 },
         }}),
         // Method 'getDebugLog'
-        QtMocHelpers::MethodData<bool()>(24, 2, QMC::AccessPrivate, QMetaType::Bool),
+        QtMocHelpers::MethodData<bool()>(30, 2, QMC::AccessPrivate, QMetaType::Bool),
         // Method 'setEngine'
-        QtMocHelpers::MethodData<void(QQmlApplicationEngine *)>(25, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { 0x80000000 | 26, 27 },
+        QtMocHelpers::MethodData<void(QQmlApplicationEngine *)>(31, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { 0x80000000 | 32, 33 },
         }}),
         // Method 'clearComponentCache'
-        QtMocHelpers::MethodData<void()>(28, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::MethodData<void()>(34, 2, QMC::AccessPublic, QMetaType::Void),
         // Method 'addImportPath'
-        QtMocHelpers::MethodData<void(const QByteArray)>(29, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QByteArray, 30 },
+        QtMocHelpers::MethodData<void(const QByteArray)>(35, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QByteArray, 36 },
         }}),
         // Method 'getUWarning'
-        QtMocHelpers::MethodData<QString()>(31, 2, QMC::AccessPublic, QMetaType::QString),
-        // Method 'setUWarning'
-        QtMocHelpers::MethodData<void(QString)>(32, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QString, 33 },
-        }}),
-        // Method 'getPorc'
-        QtMocHelpers::MethodData<int()>(34, 2, QMC::AccessPublic, QMetaType::Int),
-        // Method 'setPorc'
-        QtMocHelpers::MethodData<void(int, int)>(35, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::Int, 30 }, { QMetaType::Int, 36 },
-        }}),
-        // Method 'getUploadState'
         QtMocHelpers::MethodData<QString()>(37, 2, QMC::AccessPublic, QMetaType::QString),
-        // Method 'setUploadState'
+        // Method 'setUWarning'
         QtMocHelpers::MethodData<void(QString)>(38, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::QString, 39 },
         }}),
+        // Method 'getPorc'
+        QtMocHelpers::MethodData<int()>(40, 2, QMC::AccessPublic, QMetaType::Int),
+        // Method 'setPorc'
+        QtMocHelpers::MethodData<void(int, int)>(41, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 36 }, { QMetaType::Int, 42 },
+        }}),
+        // Method 'getUploadState'
+        QtMocHelpers::MethodData<QString()>(43, 2, QMC::AccessPublic, QMetaType::QString),
+        // Method 'setUploadState'
+        QtMocHelpers::MethodData<void(QString)>(44, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 45 },
+        }}),
         // Method 'getStdErr'
-        QtMocHelpers::MethodData<QString()>(40, 2, QMC::AccessPublic, QMetaType::QString),
+        QtMocHelpers::MethodData<QString()>(46, 2, QMC::AccessPublic, QMetaType::QString),
         // Method 'getRunCL'
-        QtMocHelpers::MethodData<bool()>(41, 2, QMC::AccessPublic, QMetaType::Bool),
+        QtMocHelpers::MethodData<bool()>(47, 2, QMC::AccessPublic, QMetaType::Bool),
         // Method 'setRunCL'
-        QtMocHelpers::MethodData<void(bool)>(42, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::Bool, 23 },
+        QtMocHelpers::MethodData<void(bool)>(48, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Bool, 29 },
         }}),
         // Method 'cd'
-        QtMocHelpers::MethodData<void(const QString &)>(43, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QString, 44 },
+        QtMocHelpers::MethodData<void(const QString &)>(49, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 50 },
         }}),
         // Method 'deleteFolder'
-        QtMocHelpers::MethodData<bool(const QString &)>(45, 2, QMC::AccessPublic, QMetaType::Bool, {{
-            { QMetaType::QString, 44 },
+        QtMocHelpers::MethodData<bool(const QString &)>(51, 2, QMC::AccessPublic, QMetaType::Bool, {{
+            { QMetaType::QString, 50 },
         }}),
         // Method 'currentFolderPath'
-        QtMocHelpers::MethodData<QString()>(46, 2, QMC::AccessPublic, QMetaType::QString),
+        QtMocHelpers::MethodData<QString()>(52, 2, QMC::AccessPublic, QMetaType::QString),
         // Method 'currentFolderName'
-        QtMocHelpers::MethodData<QString()>(47, 2, QMC::AccessPublic, QMetaType::QString),
+        QtMocHelpers::MethodData<QString()>(53, 2, QMC::AccessPublic, QMetaType::QString),
         // Method 'deleteFile'
-        QtMocHelpers::MethodData<bool(QByteArray)>(48, 2, QMC::AccessPublic, QMetaType::Bool, {{
-            { QMetaType::QByteArray, 49 },
-        }}),
-        // Method 'setFile'
-        QtMocHelpers::MethodData<bool(QByteArray, QByteArray)>(50, 2, QMC::AccessPublic, QMetaType::Bool, {{
-            { QMetaType::QByteArray, 51 }, { QMetaType::QByteArray, 52 },
-        }}),
-        // Method 'setFile'
-        QtMocHelpers::MethodData<bool(QByteArray, QByteArray, QByteArray)>(50, 2, QMC::AccessPublic, QMetaType::Bool, {{
-            { QMetaType::QByteArray, 51 }, { QMetaType::QByteArray, 52 }, { QMetaType::QByteArray, 53 },
-        }}),
-        // Method 'getFile'
-        QtMocHelpers::MethodData<QString(QByteArray)>(54, 2, QMC::AccessPublic, QMetaType::QString, {{
+        QtMocHelpers::MethodData<bool(QByteArray)>(54, 2, QMC::AccessPublic, QMetaType::Bool, {{
             { QMetaType::QByteArray, 55 },
         }}),
+        // Method 'setFile'
+        QtMocHelpers::MethodData<bool(QByteArray, QByteArray)>(56, 2, QMC::AccessPublic, QMetaType::Bool, {{
+            { QMetaType::QByteArray, 57 }, { QMetaType::QByteArray, 58 },
+        }}),
+        // Method 'setFile'
+        QtMocHelpers::MethodData<bool(QByteArray, QByteArray, QByteArray)>(56, 2, QMC::AccessPublic, QMetaType::Bool, {{
+            { QMetaType::QByteArray, 57 }, { QMetaType::QByteArray, 58 }, { QMetaType::QByteArray, 59 },
+        }}),
+        // Method 'getFile'
+        QtMocHelpers::MethodData<QString(QByteArray)>(60, 2, QMC::AccessPublic, QMetaType::QString, {{
+            { QMetaType::QByteArray, 61 },
+        }}),
         // Method 'folderExist'
-        QtMocHelpers::MethodData<bool(const QString &)>(56, 2, QMC::AccessPublic, QMetaType::Bool, {{
-            { QMetaType::QString, 44 },
+        QtMocHelpers::MethodData<bool(const QString &)>(62, 2, QMC::AccessPublic, QMetaType::Bool, {{
+            { QMetaType::QString, 50 },
         }}),
         // Method 'fileExist'
-        QtMocHelpers::MethodData<bool(QByteArray)>(57, 2, QMC::AccessPublic, QMetaType::Bool, {{
-            { QMetaType::QByteArray, 51 },
+        QtMocHelpers::MethodData<bool(QByteArray)>(63, 2, QMC::AccessPublic, QMetaType::Bool, {{
+            { QMetaType::QByteArray, 57 },
         }}),
         // Method 'getFileList'
-        QtMocHelpers::MethodData<QList<QString>(QByteArray, const QStringList)>(58, 2, QMC::AccessPublic, QMetaType::QStringList, {{
-            { QMetaType::QByteArray, 59 }, { QMetaType::QStringList, 60 },
+        QtMocHelpers::MethodData<QList<QString>(QByteArray, const QStringList)>(64, 2, QMC::AccessPublic, QMetaType::QStringList, {{
+            { QMetaType::QByteArray, 65 }, { QMetaType::QStringList, 66 },
         }}),
         // Method 'isStorageManagerGranted'
-        QtMocHelpers::MethodData<bool()>(61, 2, QMC::AccessPublic, QMetaType::Bool),
+        QtMocHelpers::MethodData<bool()>(67, 2, QMC::AccessPublic, QMetaType::Bool),
         // Method 'checkPermissions'
-        QtMocHelpers::MethodData<void()>(62, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::MethodData<void()>(68, 2, QMC::AccessPublic, QMetaType::Void),
         // Method 'getAndroidPublicDocumentsPath'
-        QtMocHelpers::MethodData<QString()>(63, 2, QMC::AccessPublic, QMetaType::QString),
+        QtMocHelpers::MethodData<QString()>(69, 2, QMC::AccessPublic, QMetaType::QString),
         // Method 'mkdir'
-        QtMocHelpers::MethodData<bool(const QString &)>(64, 2, QMC::AccessPublic, QMetaType::Bool, {{
-            { QMetaType::QString, 44 },
+        QtMocHelpers::MethodData<bool(const QString &)>(70, 2, QMC::AccessPublic, QMetaType::Bool, {{
+            { QMetaType::QString, 50 },
         }}),
         // Method 'isFolder'
-        QtMocHelpers::MethodData<bool(const QString &)>(65, 2, QMC::AccessPublic, QMetaType::Bool, {{
-            { QMetaType::QString, 59 },
+        QtMocHelpers::MethodData<bool(const QString &)>(71, 2, QMC::AccessPublic, QMetaType::Bool, {{
+            { QMetaType::QString, 65 },
         }}),
         // Method 'getFolderFileList'
-        QtMocHelpers::MethodData<QList<QString>(const QByteArray)>(66, 2, QMC::AccessPublic, QMetaType::QStringList, {{
-            { QMetaType::QByteArray, 59 },
+        QtMocHelpers::MethodData<QList<QString>(const QByteArray)>(72, 2, QMC::AccessPublic, QMetaType::QStringList, {{
+            { QMetaType::QByteArray, 65 },
         }}),
         // Method 'sqliteInit'
-        QtMocHelpers::MethodData<bool(QString)>(67, 2, QMC::AccessPublic, QMetaType::Bool, {{
-            { QMetaType::QString, 68 },
+        QtMocHelpers::MethodData<bool(QString)>(73, 2, QMC::AccessPublic, QMetaType::Bool, {{
+            { QMetaType::QString, 74 },
         }}),
         // Method 'sqlQuery'
-        QtMocHelpers::MethodData<bool(QString)>(69, 2, QMC::AccessPublic, QMetaType::Bool, {{
-            { QMetaType::QString, 70 },
+        QtMocHelpers::MethodData<bool(QString)>(75, 2, QMC::AccessPublic, QMetaType::Bool, {{
+            { QMetaType::QString, 76 },
         }}),
         // Method 'getSqlData'
-        QtMocHelpers::MethodData<QList<QObject*>(QString)>(71, 2, QMC::AccessPublic, 0x80000000 | 72, {{
-            { QMetaType::QString, 70 },
+        QtMocHelpers::MethodData<QList<QObject*>(QString)>(77, 2, QMC::AccessPublic, 0x80000000 | 78, {{
+            { QMetaType::QString, 76 },
         }}),
         // Method 'mysqlInit'
-        QtMocHelpers::MethodData<bool(QString, QString, QString, QString, int)>(73, 2, QMC::AccessPublic, QMetaType::Bool, {{
-            { QMetaType::QString, 74 }, { QMetaType::QString, 75 }, { QMetaType::QString, 76 }, { QMetaType::QString, 77 },
-            { QMetaType::Int, 78 },
+        QtMocHelpers::MethodData<bool(QString, QString, QString, QString, int)>(79, 2, QMC::AccessPublic, QMetaType::Bool, {{
+            { QMetaType::QString, 80 }, { QMetaType::QString, 81 }, { QMetaType::QString, 82 }, { QMetaType::QString, 83 },
+            { QMetaType::Int, 84 },
         }}),
         // Method 'setMySqlDatabase'
-        QtMocHelpers::MethodData<void(QString, int)>(79, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QString, 80 }, { QMetaType::Int, 78 },
+        QtMocHelpers::MethodData<void(QString, int)>(85, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 86 }, { QMetaType::Int, 84 },
         }}),
         // Method 'sqliteClose'
-        QtMocHelpers::MethodData<void()>(81, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::MethodData<void()>(87, 2, QMC::AccessPublic, QMetaType::Void),
         // Method 'restart'
-        QtMocHelpers::MethodData<void(const QStringList &, const QString &)>(82, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QStringList, 83 }, { QMetaType::QString, 84 },
+        QtMocHelpers::MethodData<void(const QStringList &, const QString &)>(88, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QStringList, 89 }, { QMetaType::QString, 90 },
         }}),
         // Method 'restartApp'
-        QtMocHelpers::MethodData<void()>(85, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::MethodData<void()>(91, 2, QMC::AccessPublic, QMetaType::Void),
         // Method 'restartApp'
-        QtMocHelpers::MethodData<void(QString)>(85, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QString, 83 },
+        QtMocHelpers::MethodData<void(QString)>(91, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 89 },
         }}),
         // Method 'run'
-        QtMocHelpers::MethodData<bool(QString)>(86, 2, QMC::AccessPublic, QMetaType::Bool, {{
-            { QMetaType::QString, 87 },
-        }}),
-        // Method 'run'
-        QtMocHelpers::MethodData<bool(QString, bool, int)>(86, 2, QMC::AccessPublic, QMetaType::Bool, {{
-            { QMetaType::QString, 87 }, { QMetaType::Bool, 88 }, { QMetaType::Int, 89 },
-        }}),
-        // Method 'writeRun'
-        QtMocHelpers::MethodData<void(QString)>(90, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QString, 91 },
-        }}),
-        // Method 'runOut'
         QtMocHelpers::MethodData<bool(QString)>(92, 2, QMC::AccessPublic, QMetaType::Bool, {{
             { QMetaType::QString, 93 },
         }}),
+        // Method 'run'
+        QtMocHelpers::MethodData<bool(QString, bool, int)>(92, 2, QMC::AccessPublic, QMetaType::Bool, {{
+            { QMetaType::QString, 93 }, { QMetaType::Bool, 94 }, { QMetaType::Int, 95 },
+        }}),
+        // Method 'writeRun'
+        QtMocHelpers::MethodData<void(QString)>(96, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 97 },
+        }}),
+        // Method 'runOut'
+        QtMocHelpers::MethodData<bool(QString)>(98, 2, QMC::AccessPublic, QMetaType::Bool, {{
+            { QMetaType::QString, 99 },
+        }}),
         // Method 'salidaRun'
-        QtMocHelpers::MethodData<void()>(94, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::MethodData<void()>(100, 2, QMC::AccessPublic, QMetaType::Void),
         // Method 'salidaRunError'
-        QtMocHelpers::MethodData<void()>(95, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::MethodData<void()>(101, 2, QMC::AccessPublic, QMetaType::Void),
         // Method 'finalizaRun'
-        QtMocHelpers::MethodData<void(int)>(96, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::Int, 27 },
+        QtMocHelpers::MethodData<void(int)>(102, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 33 },
         }}),
         // Method 'log'
         QtMocHelpers::MethodData<void(QByteArray)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QByteArray, 11 },
+            { QMetaType::QByteArray, 17 },
         }}),
         // Method 'log'
         QtMocHelpers::MethodData<void(QByteArray, bool)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QByteArray, 11 }, { QMetaType::Bool, 97 },
+            { QMetaType::QByteArray, 17 }, { QMetaType::Bool, 103 },
         }}),
         // Method 'sleep'
-        QtMocHelpers::MethodData<void(int)>(98, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::Int, 99 },
+        QtMocHelpers::MethodData<void(int)>(104, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 105 },
         }}),
         // Method 'getPath'
-        QtMocHelpers::MethodData<QString(int)>(100, 2, QMC::AccessPublic, QMetaType::QString, {{
-            { QMetaType::Int, 44 },
+        QtMocHelpers::MethodData<QString(int)>(106, 2, QMC::AccessPublic, QMetaType::QString, {{
+            { QMetaType::Int, 50 },
         }}),
         // Method 'encData'
-        QtMocHelpers::MethodData<QString(QByteArray, QString, QString)>(101, 2, QMC::AccessPublic, QMetaType::QString, {{
-            { QMetaType::QByteArray, 11 }, { QMetaType::QString, 12 }, { QMetaType::QString, 13 },
+        QtMocHelpers::MethodData<QString(QByteArray, QString, QString)>(107, 2, QMC::AccessPublic, QMetaType::QString, {{
+            { QMetaType::QByteArray, 17 }, { QMetaType::QString, 18 }, { QMetaType::QString, 19 },
         }}),
         // Method 'decData'
-        QtMocHelpers::MethodData<QString(QByteArray, QString, QString)>(102, 2, QMC::AccessPublic, QMetaType::QString, {{
-            { QMetaType::QByteArray, 15 }, { QMetaType::QString, 12 }, { QMetaType::QString, 13 },
+        QtMocHelpers::MethodData<QString(QByteArray, QString, QString)>(108, 2, QMC::AccessPublic, QMetaType::QString, {{
+            { QMetaType::QByteArray, 21 }, { QMetaType::QString, 18 }, { QMetaType::QString, 19 },
         }}),
         // Method 'mainWindow'
-        QtMocHelpers::MethodData<QQuickWindow *(int)>(103, 2, QMC::AccessPublic, 0x80000000 | 104, {{
-            { QMetaType::Int, 55 },
+        QtMocHelpers::MethodData<QQuickWindow *(int)>(109, 2, QMC::AccessPublic, 0x80000000 | 110, {{
+            { QMetaType::Int, 61 },
         }}),
         // Method 'setProperty'
-        QtMocHelpers::MethodData<void(const QString, const QVariant &)>(105, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QString, 106 }, { 0x80000000 | 107, 108 },
+        QtMocHelpers::MethodData<void(const QString, const QVariant &)>(111, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 112 }, { 0x80000000 | 113, 114 },
         }}),
         // Method 'getProperty'
-        QtMocHelpers::MethodData<QVariant(const QString)>(109, 2, QMC::AccessPublic, 0x80000000 | 107, {{
-            { QMetaType::QString, 106 },
+        QtMocHelpers::MethodData<QVariant(const QString)>(115, 2, QMC::AccessPublic, 0x80000000 | 113, {{
+            { QMetaType::QString, 112 },
         }}),
         // Method 'getEngineObjectsCount'
-        QtMocHelpers::MethodData<int()>(110, 2, QMC::AccessPublic, QMetaType::Int),
+        QtMocHelpers::MethodData<int()>(116, 2, QMC::AccessPublic, QMetaType::Int),
         // Method 'isRPI'
-        QtMocHelpers::MethodData<bool()>(111, 2, QMC::AccessPublic, QMetaType::Bool),
+        QtMocHelpers::MethodData<bool()>(117, 2, QMC::AccessPublic, QMetaType::Bool),
         // Method 'getHttpFile'
-        QtMocHelpers::MethodData<QByteArray(QByteArray)>(112, 2, QMC::AccessPublic, QMetaType::QByteArray, {{
-            { QMetaType::QByteArray, 113 },
+        QtMocHelpers::MethodData<QByteArray(QByteArray)>(118, 2, QMC::AccessPublic, QMetaType::QByteArray, {{
+            { QMetaType::QByteArray, 119 },
+        }}),
+        // Method 'downloadGitHubZip'
+        QtMocHelpers::MethodData<void(const QString &, const QString &)>(120, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 119 }, { QMetaType::QString, 121 },
+        }}),
+        // Method 'downloadGitHubZip'
+        QtMocHelpers::MethodData<void(const QString &)>(120, 2, QMC::AccessPublic | QMC::MethodCloned, QMetaType::Void, {{
+            { QMetaType::QString, 119 },
+        }}),
+        // Method 'uncompressZip'
+        QtMocHelpers::MethodData<bool(const QString &, const QString &)>(122, 2, QMC::AccessPublic, QMetaType::Bool, {{
+            { QMetaType::QString, 123 }, { QMetaType::QString, 124 },
         }}),
         // Method 'sendFile'
-        QtMocHelpers::MethodData<void(QString, QString)>(114, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QString, 115 }, { QMetaType::QString, 116 },
+        QtMocHelpers::MethodData<void(QString, QString)>(125, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 126 }, { QMetaType::QString, 127 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
         // property 'porc'
-        QtMocHelpers::PropertyData<int>(117, QMetaType::Int, QMC::DefaultPropertyFlags, 2),
+        QtMocHelpers::PropertyData<int>(128, QMetaType::Int, QMC::DefaultPropertyFlags, 2),
         // property 'uploadState'
-        QtMocHelpers::PropertyData<QString>(118, QMetaType::QString, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 3),
+        QtMocHelpers::PropertyData<QString>(129, QMetaType::QString, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 3),
         // property 'runCL'
-        QtMocHelpers::PropertyData<bool>(119, QMetaType::Bool, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 7),
+        QtMocHelpers::PropertyData<bool>(130, QMetaType::Bool, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 7),
         // property 'debugLog'
-        QtMocHelpers::PropertyData<bool>(120, QMetaType::Bool, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 6),
+        QtMocHelpers::PropertyData<bool>(131, QMetaType::Bool, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 6),
         // property 'ukStd'
-        QtMocHelpers::PropertyData<QString>(121, QMetaType::QString, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 4),
+        QtMocHelpers::PropertyData<QString>(132, QMetaType::QString, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 4),
         // property 'stdErr'
-        QtMocHelpers::PropertyData<QString>(122, QMetaType::QString, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 5),
+        QtMocHelpers::PropertyData<QString>(133, QMetaType::QString, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 5),
         // property 'initStdString'
-        QtMocHelpers::PropertyData<QString>(123, QMetaType::QString, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet),
+        QtMocHelpers::PropertyData<QString>(134, QMetaType::QString, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet),
         // property 'uWarning'
-        QtMocHelpers::PropertyData<QString>(124, QMetaType::QString, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 1),
+        QtMocHelpers::PropertyData<QString>(135, QMetaType::QString, QMC::DefaultPropertyFlags | QMC::Writable | QMC::StdCppSet, 1),
     };
     QtMocHelpers::UintData qt_enums {
     };
@@ -461,121 +492,127 @@ void UL::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_
         case 5: _t->stdErrChanged(); break;
         case 6: _t->debugLogChanged(); break;
         case 7: _t->runCLChanged(); break;
-        case 8: { QString _r = _t->encPrivateData((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[3])));
+        case 8: _t->downloadProgress((*reinterpret_cast<std::add_pointer_t<qint64>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<qint64>>(_a[2]))); break;
+        case 9: _t->downloadFinished((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2]))); break;
+        case 10: { QString _r = _t->encPrivateData((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[3])));
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 9: { QString _r = _t->decPrivateData((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[3])));
+        case 11: { QString _r = _t->decPrivateData((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[3])));
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 10: { QString _r = _t->compData((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
+        case 12: { QString _r = _t->compData((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 11: { QString _r = _t->desCompData((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
+        case 13: { QString _r = _t->desCompData((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 12: _t->setStdErr((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
-        case 13: { QString _r = _t->getInitStdString();
+        case 14: _t->setStdErr((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 15: { QString _r = _t->getInitStdString();
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 14: _t->setInitStdString((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
-        case 15: _t->setDebugLog((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
-        case 16: { bool _r = _t->getDebugLog();
+        case 16: _t->setInitStdString((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 17: _t->setDebugLog((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
+        case 18: { bool _r = _t->getDebugLog();
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 17: _t->setEngine((*reinterpret_cast<std::add_pointer_t<QQmlApplicationEngine*>>(_a[1]))); break;
-        case 18: _t->clearComponentCache(); break;
-        case 19: _t->addImportPath((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1]))); break;
-        case 20: { QString _r = _t->getUWarning();
+        case 19: _t->setEngine((*reinterpret_cast<std::add_pointer_t<QQmlApplicationEngine*>>(_a[1]))); break;
+        case 20: _t->clearComponentCache(); break;
+        case 21: _t->addImportPath((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1]))); break;
+        case 22: { QString _r = _t->getUWarning();
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 21: _t->setUWarning((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
-        case 22: { int _r = _t->getPorc();
+        case 23: _t->setUWarning((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 24: { int _r = _t->getPorc();
             if (_a[0]) *reinterpret_cast<int*>(_a[0]) = std::move(_r); }  break;
-        case 23: _t->setPorc((*reinterpret_cast<std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<int>>(_a[2]))); break;
-        case 24: { QString _r = _t->getUploadState();
+        case 25: _t->setPorc((*reinterpret_cast<std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<int>>(_a[2]))); break;
+        case 26: { QString _r = _t->getUploadState();
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 25: _t->setUploadState((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
-        case 26: { QString _r = _t->getStdErr();
+        case 27: _t->setUploadState((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 28: { QString _r = _t->getStdErr();
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 27: { bool _r = _t->getRunCL();
+        case 29: { bool _r = _t->getRunCL();
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 28: _t->setRunCL((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
-        case 29: _t->cd((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
-        case 30: { bool _r = _t->deleteFolder((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
+        case 30: _t->setRunCL((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
+        case 31: _t->cd((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 32: { bool _r = _t->deleteFolder((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 31: { QString _r = _t->currentFolderPath();
+        case 33: { QString _r = _t->currentFolderPath();
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 32: { QString _r = _t->currentFolderName();
+        case 34: { QString _r = _t->currentFolderName();
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 33: { bool _r = _t->deleteFile((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])));
+        case 35: { bool _r = _t->deleteFile((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 34: { bool _r = _t->setFile((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[2])));
+        case 36: { bool _r = _t->setFile((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[2])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 35: { bool _r = _t->setFile((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[3])));
+        case 37: { bool _r = _t->setFile((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[3])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 36: { QString _r = _t->getFile((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])));
+        case 38: { QString _r = _t->getFile((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])));
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 37: { bool _r = _t->folderExist((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
+        case 39: { bool _r = _t->folderExist((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 38: { bool _r = _t->fileExist((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])));
+        case 40: { bool _r = _t->fileExist((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 39: { QList<QString> _r = _t->getFileList((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QStringList>>(_a[2])));
+        case 41: { QList<QString> _r = _t->getFileList((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QStringList>>(_a[2])));
             if (_a[0]) *reinterpret_cast<QList<QString>*>(_a[0]) = std::move(_r); }  break;
-        case 40: { bool _r = _t->isStorageManagerGranted();
+        case 42: { bool _r = _t->isStorageManagerGranted();
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 41: _t->checkPermissions(); break;
-        case 42: { QString _r = _t->getAndroidPublicDocumentsPath();
+        case 43: _t->checkPermissions(); break;
+        case 44: { QString _r = _t->getAndroidPublicDocumentsPath();
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 43: { bool _r = _t->mkdir((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
+        case 45: { bool _r = _t->mkdir((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 44: { bool _r = _t->isFolder((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
+        case 46: { bool _r = _t->isFolder((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 45: { QList<QString> _r = _t->getFolderFileList((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])));
+        case 47: { QList<QString> _r = _t->getFolderFileList((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])));
             if (_a[0]) *reinterpret_cast<QList<QString>*>(_a[0]) = std::move(_r); }  break;
-        case 46: { bool _r = _t->sqliteInit((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
+        case 48: { bool _r = _t->sqliteInit((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 47: { bool _r = _t->sqlQuery((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
+        case 49: { bool _r = _t->sqlQuery((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 48: { QList<QObject*> _r = _t->getSqlData((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
+        case 50: { QList<QObject*> _r = _t->getSqlData((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
             if (_a[0]) *reinterpret_cast<QList<QObject*>*>(_a[0]) = std::move(_r); }  break;
-        case 49: { bool _r = _t->mysqlInit((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[3])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[4])),(*reinterpret_cast<std::add_pointer_t<int>>(_a[5])));
+        case 51: { bool _r = _t->mysqlInit((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[3])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[4])),(*reinterpret_cast<std::add_pointer_t<int>>(_a[5])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 50: _t->setMySqlDatabase((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<int>>(_a[2]))); break;
-        case 51: _t->sqliteClose(); break;
-        case 52: _t->restart((*reinterpret_cast<std::add_pointer_t<QStringList>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2]))); break;
-        case 53: _t->restartApp(); break;
-        case 54: _t->restartApp((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
-        case 55: { bool _r = _t->run((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
+        case 52: _t->setMySqlDatabase((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<int>>(_a[2]))); break;
+        case 53: _t->sqliteClose(); break;
+        case 54: _t->restart((*reinterpret_cast<std::add_pointer_t<QStringList>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2]))); break;
+        case 55: _t->restartApp(); break;
+        case 56: _t->restartApp((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 57: { bool _r = _t->run((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 56: { bool _r = _t->run((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<bool>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<int>>(_a[3])));
+        case 58: { bool _r = _t->run((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<bool>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<int>>(_a[3])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 57: _t->writeRun((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
-        case 58: { bool _r = _t->runOut((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
+        case 59: _t->writeRun((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 60: { bool _r = _t->runOut((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 59: _t->salidaRun(); break;
-        case 60: _t->salidaRunError(); break;
-        case 61: _t->finalizaRun((*reinterpret_cast<std::add_pointer_t<int>>(_a[1]))); break;
-        case 62: _t->log((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1]))); break;
-        case 63: _t->log((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<bool>>(_a[2]))); break;
-        case 64: _t->sleep((*reinterpret_cast<std::add_pointer_t<int>>(_a[1]))); break;
-        case 65: { QString _r = _t->getPath((*reinterpret_cast<std::add_pointer_t<int>>(_a[1])));
+        case 61: _t->salidaRun(); break;
+        case 62: _t->salidaRunError(); break;
+        case 63: _t->finalizaRun((*reinterpret_cast<std::add_pointer_t<int>>(_a[1]))); break;
+        case 64: _t->log((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1]))); break;
+        case 65: _t->log((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<bool>>(_a[2]))); break;
+        case 66: _t->sleep((*reinterpret_cast<std::add_pointer_t<int>>(_a[1]))); break;
+        case 67: { QString _r = _t->getPath((*reinterpret_cast<std::add_pointer_t<int>>(_a[1])));
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 66: { QString _r = _t->encData((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[3])));
+        case 68: { QString _r = _t->encData((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[3])));
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 67: { QString _r = _t->decData((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[3])));
+        case 69: { QString _r = _t->decData((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[3])));
             if (_a[0]) *reinterpret_cast<QString*>(_a[0]) = std::move(_r); }  break;
-        case 68: { QQuickWindow* _r = _t->mainWindow((*reinterpret_cast<std::add_pointer_t<int>>(_a[1])));
+        case 70: { QQuickWindow* _r = _t->mainWindow((*reinterpret_cast<std::add_pointer_t<int>>(_a[1])));
             if (_a[0]) *reinterpret_cast<QQuickWindow**>(_a[0]) = std::move(_r); }  break;
-        case 69: _t->setProperty((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QVariant>>(_a[2]))); break;
-        case 70: { QVariant _r = _t->getProperty((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
+        case 71: _t->setProperty((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QVariant>>(_a[2]))); break;
+        case 72: { QVariant _r = _t->getProperty((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])));
             if (_a[0]) *reinterpret_cast<QVariant*>(_a[0]) = std::move(_r); }  break;
-        case 71: { int _r = _t->getEngineObjectsCount();
+        case 73: { int _r = _t->getEngineObjectsCount();
             if (_a[0]) *reinterpret_cast<int*>(_a[0]) = std::move(_r); }  break;
-        case 72: { bool _r = _t->isRPI();
+        case 74: { bool _r = _t->isRPI();
             if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
-        case 73: { QByteArray _r = _t->getHttpFile((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])));
+        case 75: { QByteArray _r = _t->getHttpFile((*reinterpret_cast<std::add_pointer_t<QByteArray>>(_a[1])));
             if (_a[0]) *reinterpret_cast<QByteArray*>(_a[0]) = std::move(_r); }  break;
-        case 74: _t->sendFile((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2]))); break;
+        case 76: _t->downloadGitHubZip((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2]))); break;
+        case 77: _t->downloadGitHubZip((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 78: { bool _r = _t->uncompressZip((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2])));
+            if (_a[0]) *reinterpret_cast<bool*>(_a[0]) = std::move(_r); }  break;
+        case 79: _t->sendFile((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2]))); break;
         default: ;
         }
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
         switch (_id) {
         default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
-        case 17:
+        case 19:
             switch (*reinterpret_cast<int*>(_a[1])) {
             default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
             case 0:
@@ -600,6 +637,10 @@ void UL::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_
         if (QtMocHelpers::indexOfMethod<void (UL::*)()>(_a, &UL::debugLogChanged, 6))
             return;
         if (QtMocHelpers::indexOfMethod<void (UL::*)()>(_a, &UL::runCLChanged, 7))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (UL::*)(qint64 , qint64 )>(_a, &UL::downloadProgress, 8))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (UL::*)(bool , QString )>(_a, &UL::downloadFinished, 9))
             return;
     }
     if (_c == QMetaObject::ReadProperty) {
@@ -650,14 +691,14 @@ int UL::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 75)
+        if (_id < 80)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 75;
+        _id -= 80;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 75)
+        if (_id < 80)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 75;
+        _id -= 80;
     }
     if (_c == QMetaObject::ReadProperty || _c == QMetaObject::WriteProperty
             || _c == QMetaObject::ResetProperty || _c == QMetaObject::BindableProperty
@@ -714,5 +755,17 @@ void UL::debugLogChanged()
 void UL::runCLChanged()
 {
     QMetaObject::activate(this, &staticMetaObject, 7, nullptr);
+}
+
+// SIGNAL 8
+void UL::downloadProgress(qint64 _t1, qint64 _t2)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 8, nullptr, _t1, _t2);
+}
+
+// SIGNAL 9
+void UL::downloadFinished(bool _t1, QString _t2)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 9, nullptr, _t1, _t2);
 }
 QT_WARNING_POP

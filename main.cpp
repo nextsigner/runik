@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
     //<--Register Types
     qmlRegisterType<UnikQProcess>("unik.UnikQProcess", 1, 0, "UnikQProcess");
     qmlRegisterType<SwissEphManager>("swe", 1, 0, "Swe");
+    engine.rootContext()->setContextProperty("engine", &engine);
     engine.rootContext()->setContextProperty("clipboard", &clipboard);
     engine.rootContext()->setContextProperty("AndroidShare", &androidShare);
 #ifdef Q_OS_ANDROID

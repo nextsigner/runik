@@ -4687,7 +4687,30 @@ ul.o: ../../ul.cpp ../../ul.h \
 		../../../../Qt6/6.11.0/android_arm64_v8a/include/QtCore/qstandardpaths.h \
 		../../../../Qt6/6.11.0/android_arm64_v8a/include/QtCore/QThread \
 		../../unikqprocess.h \
-		../../row.h
+		../../row.h \
+		../../quazip/JlCompress.h \
+		../../quazip/quazip.h \
+		../../../../Qt6/6.11.0/android_arm64_v8a/include/QtCore/QStringList \
+		../../quazip/quazip_qt_compat.h \
+		../../../../Qt6/6.11.0/android_arm64_v8a/include/QtCore/Qt \
+		../../../../Qt6/6.11.0/android_arm64_v8a/include/QtCore/QtGlobal \
+		../../quazip/quazip_textcodec.h \
+		../../../../Qt6/6.11.0/android_arm64_v8a/include/QtCore/QByteArray \
+		../../quazip/quazip_global.h \
+		../../quazip/quazip_config.h \
+		../../../../Qt6/6.11.0/android_arm64_v8a/include/QtCore/QStringConverter \
+		../../../../Qt6/6.11.0/android_arm64_v8a/include/QtCore/QSaveFile \
+		../../../../Qt6/6.11.0/android_arm64_v8a/include/QtCore/qsavefile.h \
+		../../../../Qt6/6.11.0/android_arm64_v8a/include/QtCore/QtAlgorithms \
+		../../../../Qt6/6.11.0/android_arm64_v8a/include/QtCore/QFileInfo \
+		../../../../Qt6/6.11.0/android_arm64_v8a/include/QtCore/QTimeZone \
+		../../quazip/zip.h \
+		../../quazip/ioapi.h \
+		../../quazip/unzip.h \
+		../../quazip/quazipfileinfo.h \
+		../../../../Qt6/6.11.0/android_arm64_v8a/include/QtCore/QHash \
+		../../quazip/quazipfile.h \
+		../../quazip/quazipnewinfo.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ul.o ../../ul.cpp
 
 unikargsproc.o: ../../unikargsproc.cpp ../../unikargsproc.h \

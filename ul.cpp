@@ -1,9 +1,11 @@
 #include "ul.h"
 #include <QVariant>
 
+#include <JlCompress.h> // O #include <quazip/JlCompress.h> según tu instalación
+
 UL::UL(QObject *parent) : QObject(parent)
 {
-
+    networkManager = new QNetworkAccessManager(this);
 }
 
 void UL::cd(const QString &path)
@@ -1030,6 +1032,114 @@ void UL::httpReadyRead()
     //...
 }
 
+void UL::downloadGitHubZip(const QString &urlStr, const QString &outputFileName)
+{
+    QUrl url(urlStr);
+    if (!url.isValid()) {
+        qWarning() << "UL::downloadGitHubZip: URL inválida ->" << urlStr;
+        emit downloadFinished(false, "");
+        return;
+    }
+
+    // Obtiene la ruta de la carpeta temporal del sistema operativo (/tmp en Linux, caché temporal en Android)
+    QString tempPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
+    QString targetFilePath = tempPath + QDir::separator() + outputFileName;
+
+    // Si ya existe un archivo con el mismo nombre en temporal, lo borramos
+    if (QFile::exists(targetFilePath)) {
+        QFile::remove(targetFilePath);
+    }
+
+    QNetworkRequest request(url);
+    // Opcional pero recomendado para GitHub (evita bloqueos por User-Agent vacío)
+    request.setHeader(QNetworkRequest::UserAgentHeader, "Runik-App/1.0");
+
+    // Importante para seguir redirecciones automáticas (GitHub redirige descargas a CDN)
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+
+    QNetworkReply *reply = networkManager->get(request);
+
+    // Creamos el archivo en modo escritura binaria en la ruta temporal
+    QFile *file = new QFile(targetFilePath, this);
+    if (!file->open(QIODevice::WriteOnly)) {
+        qWarning() << "UL::downloadGitHubZip: No se pudo abrir el archivo temporal para escribir:" << targetFilePath;
+        file->deleteLater();
+        reply->deleteLater();
+        emit downloadFinished(false, "");
+        return;
+    }
+
+    // Conectamos la escritura de datos conforme llegan
+    QObject::connect(reply, &QNetworkReply::readyRead, [reply, file]() {
+        file->write(reply->readAll());
+    });
+
+    // Conectamos la señal de progreso nativa de QNetworkReply a nuestra propia señal para QML
+    QObject::connect(reply, &QNetworkReply::downloadProgress, this, [this](qint64 bytesReceived, qint64 bytesTotal) {
+        emit downloadProgress(bytesReceived, bytesTotal);
+    });
+
+    // Manejo de errores
+    QObject::connect(reply, &QNetworkReply::errorOccurred, [this, reply, file](QNetworkReply::NetworkError code) {
+        qWarning() << "UL::downloadGitHubZip Error de red:" << reply->errorString() << "(Código:" << code << ")";
+        file->close();
+        file->deleteLater();
+        reply->deleteLater();
+        emit downloadFinished(false, "");
+    });
+
+    // Finalización de la descarga
+    QObject::connect(reply, &QNetworkReply::finished, [this, reply, file, targetFilePath]() {
+        file->close();
+
+        bool success = (reply->error() == QNetworkReply::NoError);
+        if (success) {
+            qDebug() << "Descarga completada con éxito en:" << targetFilePath;
+            emit downloadFinished(true, targetFilePath);
+        } else {
+            // Si falló, borramos el archivo parcial
+            QFile::remove(targetFilePath);
+            emit downloadFinished(false, "");
+        }
+
+        file->deleteLater();
+        reply->deleteLater();
+    });
+}
+
+
+
+bool UL::uncompressZip(const QString &zipFilePath, const QString &destinationDir)
+{
+    // Verificamos que el archivo ZIP exista físicamente
+    if (!QFile::exists(zipFilePath)) {
+        qWarning() << "UL::uncompressZip: El archivo ZIP no existe en la ruta:" << zipFilePath;
+        return false;
+    }
+
+    // Aseguramos que la carpeta de destino exista (si no existe, la creamos)
+    QDir dir;
+    if (!dir.exists(destinationDir)) {
+        if (!dir.mkpath(destinationDir)) {
+            qWarning() << "UL::uncompressZip: No se pudo crear la carpeta de destino:" << destinationDir;
+            return false;
+        }
+    }
+
+    qDebug() << "Descomprimiendo" << zipFilePath << "en" << destinationDir << "...";
+
+    // JlCompress extrae todo el contenido y devuelve la lista de archivos extraídos
+    QStringList extractedFiles = JlCompress::extractDir(zipFilePath, destinationDir);
+
+    if (extractedFiles.isEmpty()) {
+        qWarning() << "UL::uncompressZip: Falló la descompresión o el archivo ZIP está vacío/corrupto.";
+        return false;
+    }
+
+    qDebug() << "¡Descompresión exitosa! Total de archivos extraídos:" << extractedFiles.size();
+    return true;
+}
+
 QString UL::encPrivateData(QByteArray d, QString user, QString key)
 {
     QString ret;
@@ -1401,40 +1511,41 @@ void UL::uploadProgress(qint64 bytesSend, qint64 bytesTotal)
     log(nl);
 }
 
-void UL::downloadProgress(qint64 bytesSend, qint64 bytesTotal)
-{
-    //double porc = (((double)bytesSend)/bytesTotal)*100;
-    //int porc= (int)((bytesSend * 100) / bytesTotal);
-    /*qint32 bs=qint32(bytesSend);
-    qint32 bt=qint32(bytesTotal);
-#ifdef Q_OS_LINUX
-#ifdef Q_OS_ANDROID
-    double porc = (((double)bs)/bt)*100;
-#else
-    int porc= (int)((bytesSend * 100) / bytesTotal);
-#endif
-#endif
-#ifdef Q_OS_WIN
-    double porc = (((double)bytesSend)/bytesTotal)*100;
-#endif
-#ifdef Q_OS_OSX
-    double porc = (((double)bytesSend)/bytesTotal)*100;
-#endif
-    QString d1;
-    d1.append(QString::number(porc));
-    QStringList sd1=d1.split(".");
-    setPorc(QString(sd1.at(0)).toInt(), 0);*/
-    double porc = (((double)bytesSend)/bytesTotal)*100;
-    QString d1;
-    d1.append(QString::number(porc));
-    QStringList sd1=d1.split(".");
-    QByteArray nl;
-    nl.append("download ");
-    nl.append(uZipUrl.toUtf8());
-    nl.append(" %");
-    nl.append(sd1.at(0).toUtf8());
-    log(nl);
-}
+// void UL::downloadProgress(qint64 bytesSend, qint64 bytesTotal)
+// {
+//     //double porc = (((double)bytesSend)/bytesTotal)*100;
+//     //int porc= (int)((bytesSend * 100) / bytesTotal);
+//     /*qint32 bs=qint32(bytesSend);
+//     qint32 bt=qint32(bytesTotal);
+// #ifdef Q_OS_LINUX
+// #ifdef Q_OS_ANDROID
+//     double porc = (((double)bs)/bt)*100;
+// #else
+//     int porc= (int)((bytesSend * 100) / bytesTotal);
+// #endif
+// #endif
+// #ifdef Q_OS_WIN
+//     double porc = (((double)bytesSend)/bytesTotal)*100;
+// #endif
+// #ifdef Q_OS_OSX
+//     double porc = (((double)bytesSend)/bytesTotal)*100;
+// #endif
+//     QString d1;
+//     d1.append(QString::number(porc));
+//     QStringList sd1=d1.split(".");
+//     setPorc(QString(sd1.at(0)).toInt(), 0);*/
+//     double porc = (((double)bytesSend)/bytesTotal)*100;
+//     QString d1;
+//     d1.append(QString::number(porc));
+//     QStringList sd1=d1.split(".");
+//     QByteArray nl;
+//     nl.append("download ");
+//     nl.append(uZipUrl.toUtf8());
+//     nl.append(" %");
+//     nl.append(sd1.at(0).toUtf8());
+//     log(nl);
+// }
+
 void UL::sendFinished()
 {
     if(debugLog){

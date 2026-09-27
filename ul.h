@@ -310,11 +310,13 @@ public:
     //Funciones Network
     Q_INVOKABLE QByteArray getHttpFile(QByteArray url);
     void httpReadyRead();
+    Q_INVOKABLE void downloadGitHubZip(const QString &url, const QString &outputFileName = "downloaded.zip");
+    Q_INVOKABLE bool uncompressZip(const QString &zipFilePath, const QString &destinationDir);
 
 
     Q_INVOKABLE void sendFile(QString file, QString phpReceiver);
     void uploadProgress(qint64 bytesSend, qint64 bytesTotal);
-    void downloadProgress(qint64 bytesSend, qint64 bytesTotal);
+    //void downloadProgress(qint64 bytesSend, qint64 bytesTotal);
     void sendFinished();
     bool startWSS(QByteArray ip,  int port, QByteArray serverName);
 
@@ -329,6 +331,9 @@ signals:
     void debugLogChanged();
     void runCLChanged();
 
+    void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void downloadFinished(bool success, QString filePath);
+
 private slots:
     QString encPrivateData(QByteArray d, QString user, QString key);
     QString decPrivateData(QByteArray d0, QString user, QString key);
@@ -338,6 +343,7 @@ private slots:
 
 
 private:
+    QNetworkAccessManager *networkManager;
     QSqlDatabase db;
     QSqlDatabase firstDB;
     QSqlDatabase secondDB;
