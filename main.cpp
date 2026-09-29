@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QtMultimedia>
 
 #include "ul.h"
 #include "qmlclipboardadapter.h"

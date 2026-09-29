@@ -1,1 +1,0 @@
-i7: Se agrega ZoolandMap a Main.qml

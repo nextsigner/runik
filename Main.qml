@@ -242,6 +242,25 @@ Window {
 
     }
     Component.onCompleted: {
+        if(Qt.application.arguments.toString().indexOf('-folder')>=0){
+            let folder=''
+            for(var i=0;i<Qt.application.arguments.length;i++){
+                let arg=Qt.application.arguments[i]
+                if(arg.indexOf('-folder=')===0){
+                    let m0=arg.split('-folder=')
+                    folder=m0[1]
+                    break
+                }
+            }
+            let mainPath=folder+'/main.qml'
+            if(unikObj.fileExist(mainPath)){
+                engine.load(mainPath)
+                app.close()
+                return
+            }else{
+                statusText.text="El archivo "+mainPath+' no existe!'
+            }
+        }
         if(!app.isRunikStart && Qt.application.arguments.indexOf('-dev')<0){
             tiAppId.text="0"
         }

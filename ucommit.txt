@@ -1,1 +1,1 @@
-i7: Se corrige tamaño de lv
+i7: Se elimina carpeta build de android
