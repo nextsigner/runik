@@ -36,6 +36,15 @@ json_files.files = $$PWD/android/jsons/*
 
 INSTALLS += assets json_files
 
+
+###-----Forzar la inclusión del plugin multimedia para Android----->###
+android {
+    QTPLUGIN += multimedia
+    # O si usas el plugin basado en FFmpeg que trae Qt6 Multimedia:
+    QTPLUGIN += ffmpegmediaplugin androidmediaplugin
+}
+###<-----Forzar la inclusión del plugin multimedia para Android-----###
+
 ###------OPENSSL----->###
 #IMPORTANTÏSIMO!!!!!!
 #Clonar con git en la carpeta nsp el repositorio de KDAB de librerías openssl para Android.
