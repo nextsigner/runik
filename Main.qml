@@ -4,6 +4,22 @@ import QtCore
 import unik.Unik 1.0
 import QtMultimedia
 
+//import Qt.labs.calendar
+import Qt.labs.folderlistmodel
+import Qt.labs.platform
+//import Qt.labs.settings
+
+/*
+import Qt.WebSockets
+import Qt3D.Animation
+import Qt3D.Core
+import Qt3D.Extras
+import Qt3D.Input
+import Qt3D.Logic
+import Qt3D.Render
+import Qt3D.Scene2D
+*/
+
 Window {
     id: app
     width: Qt.platform.os==='android'?640:608
@@ -35,7 +51,7 @@ Window {
             }
             TextInput{
                 id: tiAppId
-                //text: 'https://github.com/nextsigner/semitimes-m1'
+                text: apps.uIdApp//'https://github.com/nextsigner/semitimes-m1'
                 width: app.width-app.fs
                 height: app.fs*1.2
                 font.pixelSize: app.fs
@@ -139,14 +155,15 @@ Window {
             visible: false
             ListView{
                 id: lv
-                spacing: app.fs*0.25
-                //anchors.fill: parent
+                spacing: app.fs
                 width: parent.width
                 height: parent.height*0.9
-                anchors.centerIn: parent
+                //anchors.centerIn: parent
                 model: lm
                 delegate: compLv
+                anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
+                anchors.topMargin: app.fs
                 ListModel{
                     id: lm
                     function addItem(d){
@@ -165,6 +182,8 @@ Window {
                         border.color: apps.fontColor
                         radius: app.fs*0.25
                         anchors.horizontalCenter: parent.horizontalCenter
+                        //anchors.top: parent.top
+                        //anchors.topMargin: app.fs
                         MouseArea{
                             anchors.fill: parent
                             onClicked: {
@@ -225,7 +244,8 @@ Window {
                         msg+='\nArchivos: '+files.toString()
                         let mainFile=folderQml+'/main.qml'
                         engine.load(mainFile)
-                        //app.close()
+                        apps.uIdApp=tiAppId.text
+                        app.close()
                         console.log(msg)
                         statusText.text=msg
 
@@ -243,72 +263,6 @@ Window {
 
 
     }
-    Loader {
-        id: mediaLoader
-        anchors.fill: parent
-        sourceComponent: multimediaComponent
-        asynchronous: true
-    }
-
-    Component {
-        id: multimediaComponent
-        Item {
-            anchors.fill: parent
-
-            MediaPlayer {
-                id: mediaPlayer
-                source: "https://github.com/nextsigner/aristoteles/releases/download/filosof%C3%ADa/1.wav"
-                audioOutput: AudioOutput {
-                    id: audioOutput
-                    volume: 1.0
-                }
-                autoPlay: true
-            }
-
-            MouseArea {
-                id: touchArea
-                anchors.fill: parent
-
-                property real startX: 0
-
-                onPressed: (mouse) => {
-                    startX = mouse.x;
-                }
-
-                onReleased: (mouse) => {
-                    var deltaX = mouse.x - startX;
-                    var screenWidth = mainWindow.width;
-                    var ratio = Math.abs(deltaX) / screenWidth;
-
-                    if (ratio < 0.05) {
-                        if (mediaPlayer.playbackState === MediaPlayer.PlayingState) {
-                            mediaPlayer.pause();
-                        } else {
-                            mediaPlayer.play();
-                        }
-                        return;
-                    }
-
-                    var minJump = 10 * 1000;
-                    var maxJump = 5 * 60 * 1000;
-
-                    var jumpTime = minJump + ratio * (maxJump - minJump);
-                    if (jumpTime > maxJump) jumpTime = maxJump;
-
-                    var newPosition = mediaPlayer.position;
-
-                    if (deltaX > 0) {
-                        newPosition += jumpTime;
-                        mediaPlayer.seek(Math.min(newPosition, mediaPlayer.duration));
-                    } else {
-                        newPosition -= jumpTime;
-                        mediaPlayer.seek(Math.max(newPosition, 0));
-                    }
-                }
-            }
-        }
-    }
-
     Component.onCompleted: {
         if(Qt.application.arguments.toString().indexOf('-folder')>=0){
             let folder=''
