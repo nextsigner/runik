@@ -4,6 +4,7 @@ DESTDIR = $$PWD/bin
 QT += quick quick3d sql core gui
 QT += network multimedia
 
+
 # Evita APIs obsoletas
 DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 

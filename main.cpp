@@ -41,10 +41,17 @@ int main(int argc, char *argv[])
     AndroidShare androidShare;
 //#endif
 
-    qmlRegisterType<UL>("unik.Unik", 1, 0, "Unik");
+
+    // Exponer la instancia al contexto raíz de QML
+    QmlErrorLogger logger;
+    engine.rootContext()->setContextProperty("qmlErrorLogger", &logger);
+    engine.rootContext()->setContextProperty("errorDeQml", &logger);
+
     //<--Register Types
+    qmlRegisterType<UL>("unik.Unik", 1, 0, "Unik");
     qmlRegisterType<UnikQProcess>("unik.UnikQProcess", 1, 0, "UnikQProcess");
     qmlRegisterType<SwissEphManager>("swe", 1, 0, "Swe");
+    engine.rootContext()->setContextProperty("unik", &u);
     engine.rootContext()->setContextProperty("engine", &engine);
     engine.rootContext()->setContextProperty("clipboard", &clipboard);
     engine.rootContext()->setContextProperty("AndroidShare", &androidShare);

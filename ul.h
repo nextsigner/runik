@@ -246,6 +246,24 @@ public:
     }
     //<--UkStd
 
+    Q_INVOKABLE void speak(const QString &text) {
+        if (text.trimmed().isEmpty()) return;
+
+#if defined(Q_OS_ANDROID)
+        qDebug() << "[TTS Android] Recibido texto para reproducir:" << text;
+
+        // Nota: En Android, si el módulo texttospeech de Qt no está enlazado por QMake,
+        // la manera estándar de emitir voz sin crashear el hilo gráfico es mediante
+        // un puente multimedia o asegurando que el motor de voz del sistema esté activo.
+        // Actualmente el método está en blanco en esta plataforma.
+
+#elif defined(Q_OS_LINUX)
+        QStringList args;
+        args << text;
+        QProcess::startDetached("spd-say", args);
+#endif
+    }
+
     //-->Variables
     QString initStdString;
     bool debugLog;

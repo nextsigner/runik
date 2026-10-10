@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+//import Qt.labs.settings
 import QtCore
 import unik.Unik 1.0
 import QtMultimedia
@@ -32,9 +33,22 @@ Window {
     property bool isRunikStart: false
     Settings{
         id: apps
+        //fileName: unikObj.getPath(4)+'/runik.cfg'
         property color backgroundColor: 'black'
         property color fontColor: 'white'
         property string uIdApp: ''
+        property bool autoUpdateRunikGUI: true
+        property bool autoLoad: true
+    }
+    Connections{
+        target: qmlErrorLogger
+        onMessagesChanged:{
+            //if(Qt.platform.os==='linux' && app.enableQmlErrorLog && apps.dev && ap){
+                //app.flags=Qt.Window
+                //app.visibility="Maximized"
+                log.text+=''+qmlErrorLogger.messages[qmlErrorLogger.messages.length-1]+'<br>'
+            //}
+        }
     }
     Rectangle{
         id: xApp
@@ -43,13 +57,19 @@ Window {
         width: parent.width-app.fs*4
         height: parent.height-app.fs*6
         anchors.centerIn: parent
+        MouseArea{
+            anchors.fill: parent
+            onDoubleClicked: app.isRunikStart=!app.isRunikStart
+        }
         Column{
             spacing: app.fs*0.5
+            width: xApp.width*0.5
             anchors.centerIn: parent
             Text{
                 text: app.title
-                font.pixelSize: app.fs
+                font.pixelSize: app.fs*3
                 color: apps.fontColor
+                anchors.horizontalCenter: parent.horizontalCenter
             }
             Item{width: 1; height: app.fs*3}
             Text{
@@ -57,14 +77,16 @@ Window {
                 text: "Ingresar nombre, url o código de la aplicación:"
                 font.pixelSize: app.fs
                 color: apps.fontColor
+                anchors.left: tiAppId.left
             }
             TextInput{
                 id: tiAppId
                 text: apps.uIdApp//'https://github.com/nextsigner/semitimes-m1'
-                width: app.width-app.fs
+                width: xApp.width-app.fs*4
                 height: app.fs*1.2
                 font.pixelSize: app.fs
                 color: apps.fontColor
+                anchors.horizontalCenter: parent.horizontalCenter
                 Rectangle{
                     width: parent.width+app.fs*0.5
                     height: parent.height+app.fs*0.5
@@ -72,6 +94,48 @@ Window {
                     border.width: 1
                     border.color: apps.fontColor
                     anchors.centerIn: parent
+                }
+            }
+            Row{
+                spacing: app.fs
+                visible: !app.isRunikStart
+                Text{
+                    text: 'Auto actualizar Runik:'
+                    color: apps.fontColor
+                    font.pixelSize: app.fs
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                CheckBox{
+                    checked: apps.autoUpdateRunikGUI
+                    onCheckedChanged: apps.autoUpdateRunikGUI=checked
+                    anchors.verticalCenter: parent.verticalCenter
+                    Rectangle{
+                        color: 'transparent'
+                        border.width: 1
+                        border.color: 'white'
+                        anchors.fill: parent
+                    }
+                }
+            }
+            Row{
+                spacing: app.fs
+                visible: !app.isRunikStart
+                Text{
+                    text: 'Auto cargar ultima app:'
+                    color: apps.fontColor
+                    font.pixelSize: app.fs
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+                CheckBox{
+                    checked: apps.autoLoad
+                    onCheckedChanged: apps.autoLoad=checked
+                    anchors.verticalCenter: parent.verticalCenter
+                    Rectangle{
+                        color: 'transparent'
+                        border.width: 1
+                        border.color: 'white'
+                        anchors.fill: parent
+                    }
                 }
             }
             Row{
@@ -86,12 +150,52 @@ Window {
                 }
                 Button{
                     id: btnCargar
-                    text: "Cargar"
+                    text: 'Cargar'
                     font.pixelSize: app.fs
                     onClicked: {
+                        let url=tiAppId.text
+                        let m0=url.split('/')
+                        let pn=m0[m0.length-1]
+                        unikObj.cProject=pn
+                        let msg=""
+                        let folder=''
+                        if(Qt.platform.os==='android'){
+                            folder=unikObj.getPath(3)+'/runik'
+                        }else{
+                            folder=unikObj.getPath(4)+'/runik'
+                        }
+                        let folderQml=folder+'/'+unikObj.cProject+'-main'
+                        let mainFile=folderQml+'/main.qml'
+                        if(unikObj.folderExist(folderQml) && unikObj.fileExist(folderQml+'/main.qml')){
+                            if(unikObj.folderExist(folderQml+'/modules')){
+                                unik.addImportPath(folderQml+'/modules')
+                            }
+                            engine.load(mainFile)
+                            if(tiAppId.text!=='0' && app.isRunikStart){
+                                apps.uIdApp=tiAppId.text
+                            }
+                            app.close()
+                        }else{
+                            msg='No se ha podido descargar '+tiAppId.text+'\n'
+                            msg='Hay un error en la url o ha fallado la conexión de internet.\n'
+                        }
+                        console.log(msg);
+                        statusText.text=msg
+                    }
+                }
+                Button{
+                    id: btnActualizar
+                    text: "Actualizar"
+                    font.pixelSize: app.fs
+                    onClicked: run()
+                    function run(){
+                        console.log('btnActualizar.run()...')
                         let urlZipFile
-                        if(tiAppId.text.indexOf('https:')===0){
+                        if(tiAppId.text.indexOf('https:')===0 || tiAppId.text==='0'){
                             let url=tiAppId.text
+                            if(tiAppId.text==='0'){
+                                url="https://github.com/nextsigner/runik-start"
+                            }
                             urlZipFile=getGitHubZipUrl(url)
                             let m0=url.split('/')
                             let pn=m0[m0.length-1]
@@ -103,7 +207,7 @@ Window {
                                 let linea=app.uAppsList[i]
                                 if(linea.length>3){
                                     let args=linea.split(' ')
-                                    if(args[0]===tiAppId.text){
+                                    if(args[0]===tiAppId.text && tiAppId.text!=='0'){
                                         unikObj.cProject=args[1]
                                         urlZipFile=getGitHubZipUrl(args[2])
                                         statusText.text='Descargando '+urlZipFile
@@ -147,11 +251,11 @@ Window {
             Text{
                 id: statusText
                 text: ""
-                width: app.width-app.fs
+                width: xApp.width-app.fs
                 wrapMode: Text.WordWrap
                 font.pixelSize: app.fs
                 color: apps.fontColor
-                visible: !app.isRunikStart  && Qt.application.arguments.indexOf('-dev')<0
+                visible: !app.isRunikStart  && Qt.application.arguments.indexOf('-dev')>=0
             }
 
         }
@@ -192,6 +296,7 @@ Window {
                         border.color: apps.fontColor
                         radius: app.fs*0.25
                         anchors.horizontalCenter: parent.horizontalCenter
+                        clip: true
                         MouseArea{
                             anchors.fill: parent
                             onClicked: {
@@ -219,10 +324,19 @@ Window {
                             }
                         }
                         Text{
+                            id: txtDato
                             text: dato
                             font.pixelSize: app.fs
                             color: apps.fontColor
+                            opacity: !tSetFS.running?1.0:0.0
                             anchors.centerIn: parent
+                            Timer{
+                                id: tSetFS
+                                running: parent.contentWidth>parent.parent.width-app.fs*4
+                                repeat: true
+                                interval: 100
+                                onTriggered: parent.font.pixelSize-=2
+                            }
                         }
                     }
                 }
@@ -252,28 +366,31 @@ Window {
             }
             onDownloadFinished: function(success, filePath) {
                 let msg=""
+                let folder=''
+                if(Qt.platform.os==='android'){
+                    folder=unikObj.getPath(3)+'/runik'
+                }else{
+                    folder=unikObj.getPath(4)+'/runik'
+                }
+                let folderQml=folder+'/'+unikObj.cProject+'-main'
+                let mainFile=folderQml+'/main.qml'
                 if (success) {
                     console.log("¡Archivo descargado en la ruta temporal!: " + filePath);
-                    let folder=''
-                    if(Qt.platform.os==='android'){
-                        folder=unikObj.getPath(3)+'/runik'
-                    }else{
-                        folder=unikObj.getPath(4)+'/runik'
-                    }
                     let descomprimido=unikObj.uncompressZip(filePath, folder)
                     if(descomprimido){
                         msg="Se ha descomprimido el arhivo!\nCarpeta: "+folder
-                        let folderQml=folder+'/'+unikObj.cProject+'-main'
+                        //let folderQml=folder+'/'+unikObj.cProject+'-main'
                         msg+="\nCarpeta final: "+folderQml
 
                         let files=unikObj.getFileList(folderQml, '*.*')
                         msg+='\nArchivos: '+files.toString()
-                        let mainFile=folderQml+'/main.qml'
+                        //let mainFile=folderQml+'/main.qml'
                         console.log('mainFile: '+mainFile)
                         unikObj.cd(folderQml)
                         //unikObj.mkdir(folderQml+'/modules')
                         if(unikObj.folderExist(folderQml+'/modules')){
-                            engine.addImportPath(folderQml+'/modules')
+                            //engine.addImportPath(folderQml+'/modules')
+                            unik.addImportPath(folderQml+'/modules')
                         }
                         engine.load(mainFile)
                         if(tiAppId.text!=='0' && app.isRunikStart){
@@ -289,6 +406,19 @@ Window {
                     }
                 } else {
                     msg="Error al descargar el archivo ZIP."
+                    if(unikObj.folderExist(folderQml) && unikObj.fileExist(folderQml+'/main.qml')){
+                        if(unikObj.folderExist(folderQml+'/modules')){
+                            unik.addImportPath(folderQml+'/modules')
+                        }
+                        engine.load(mainFile)
+                        if(tiAppId.text!=='0' && app.isRunikStart){
+                            apps.uIdApp=tiAppId.text
+                        }
+                        app.close()
+                    }else{
+                        msg='No se ha podido descargar '+tiAppId.text+'\n'
+                        msg='Hay un error en la url o ha fallado la conexión de internet.\n'
+                    }
                     console.log(msg);
                     statusText.text=msg
                 }
@@ -297,7 +427,52 @@ Window {
 
 
     }
+    Rectangle{
+        id: xLog
+        color: apps.backgroundColor
+        anchors.fill: parent
+        visible: false
+        Flickable{
+            width: parent.width
+            height: parent.height
+            contentWidth: width
+            contentHeight: log.contentHeight
+            Text{
+                id: log
+                width: xLog.width-app.fs
+                color: apps.fontColor
+                wrapMode: Text.WordWrap
+                textFormat: Text.RichText
+                onTextChanged: {
+                    if(text!=='')xLog.visible=true
+                }
+            }
+        }
+    }
+    // Timer{
+    //     running: true
+    //     repeat: true
+    //     interval: 5000
+    //     onTriggered: unik.speak('Hola. Aplicación runik iniciada.')
+    // }
     Component.onCompleted: {
+        //apps.autoLoad=false
+
+
+        let currentUrl = Qt.resolvedUrl("").toString();
+
+        // Extraemos únicamente el nombre del archivo al final de la URL
+        /*let fileName = currentUrl.substring(currentUrl.lastIndexOf("/") + 1);
+
+        console.log("Nombre del archivo actual:", fileName);
+
+        if (fileName === "Main.qml") {
+            console.log("El archivo se llama exactamente con la 'M' en mayúscula.");
+            app.isRunikStart=false
+        } else if (fileName === "main.qml") {
+            console.log("El archivo está en minúsculas.");
+            app.isRunikStart=true
+        }*/
         //console.log('Ejecutando en: '+unikObj.currentFolderName()
         //app.isRunikStart=unikObj.currentFolderName().indexOf('runik-start')>=0
         if(Qt.application.arguments.toString().indexOf('-folder')>=0){
@@ -319,11 +494,19 @@ Window {
                 statusText.text="El archivo "+mainPath+' no existe!'
             }
         }
-        if(!app.isRunikStart && Qt.application.arguments.indexOf('-dev')<0){
+        if(!apps.autoLoad && apps.autoUpdateRunikGUI && !app.isRunikStart && Qt.application.arguments.indexOf('-dev')<0){
             tiAppId.text="0"
+        }else{
+            if(apps.autoLoad){
+                tiAppId.text=apps.uIdApp
+                tiAppId.focus=true
+                tiAppId.selectAll()
+            }
         }
         getAppsList()
-        tiAppId.focus=true
+
+        //let c='import QtQuickff'
+        //let obj=Qt.createQmlObject(c, xApp, 'pruebaErrorQml-code')
     }
 
     /*Component.onCompleted: {
@@ -340,7 +523,13 @@ Window {
 
     Shortcut{
         sequence: 'Esc'
-        onActivated: Qt.quit()
+        onActivated: {
+            if(xLog.visible){
+                xLog.visible=false
+                return
+            }
+            Qt.quit()
+        }
     }
 
     function getAppsList(){
@@ -353,11 +542,14 @@ Window {
         fetchAppsList(targetUrl, function(success, data) {
             if (success) {
                 //textArea.text = data;
-                statusText.text = "¡Archivo cargado con éxito!";
+                statusText.text = "Lista de aplicaciones descargada con éxito.";
                 statusText.text+='\n'+data
                 app.uAppsList=data.split('\n')
-                if(!app.isRunikStart && Qt.application.arguments.indexOf('-dev')<0){
-                    btnCargar.clicked()
+                if(!app.isRunikStart && Qt.application.arguments.indexOf('-dev')<0 && tiAppId.text!=='https://github.com/nextsigner/runik-start'){
+                    console.log('Actualizando Runik-Start: ['+tiAppId.text+']')
+                    if(apps.autoLoad){
+                        btnActualizar.run()
+                    }
                 }
             } else {
                 statusText.text = data; // Muestra el mensaje de error
@@ -474,3 +666,5 @@ Window {
 
     }
 }
+
+
