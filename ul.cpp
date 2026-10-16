@@ -2,6 +2,7 @@
 #include <QVariant>
 
 #include <JlCompress.h> // O #include <quazip/JlCompress.h> según tu instalación
+#include <cstdlib>
 
 UL::UL(QObject *parent) : QObject(parent)
 {
@@ -442,46 +443,88 @@ QList<QString> UL::getFolderFileList(const QByteArray folder)
 
 void UL::restart(const QStringList &args, const QString &newWorkingDirectory)
 {
-    QString applicationPath = QCoreApplication::applicationFilePath();
-        QString finalWorkingDirectory = newWorkingDirectory;
+    Q_UNUSED(args);
+    Q_UNUSED(newWorkingDirectory);
 
-        qDebug() << "Intentando reiniciar aplicación...";
-        qDebug() << "Ruta de la aplicación:" << applicationPath;
-        qDebug() << "Argumentos:" << args.join(" ");
+    qDebug() << "Programando reinicio seguro en Android...";
 
-        if (!newWorkingDirectory.isEmpty()) {
-            QDir newDir(newWorkingDirectory);
-            if (!newDir.exists() || !newDir.isReadable()) {
-                qWarning() << "El nuevo directorio de trabajo especificado no existe o no es accesible:" << newWorkingDirectory;
-                //emit restartAttempted(false, "El directorio de trabajo no existe o no es accesible.");
-                return;
-            }
-            finalWorkingDirectory = QDir::cleanPath(newDir.absolutePath());
-            qDebug() << "Nuevo directorio de trabajo (final):" << finalWorkingDirectory;
-        } else {
-            finalWorkingDirectory = QCoreApplication::applicationDirPath();
-            qDebug() << "No se especificó nuevo directorio de trabajo, usando el actual:" << finalWorkingDirectory;
+    // 1. Obtener el contexto de Android
+    QJniObject context = QNativeInterface::QAndroidApplication::context();
+    if (!context.isValid()) {
+        qWarning() << "No se pudo obtener el contexto de Android.";
+        return;
+    }
+
+    // 2. Obtener el paquete y su Intent de lanzamiento
+    QJniObject packageName = context.callObjectMethod("getPackageName", "()Ljava/lang/String;");
+    QJniObject packageManager = context.callObjectMethod("getPackageManager", "()Landroid/content/pm/PackageManager;");
+
+    if (!packageManager.isValid() || !packageName.isValid()) {
+        qWarning() << "No se pudo acceder al PackageManager.";
+        return;
+    }
+
+    QJniObject launchIntent = packageManager.callObjectMethod(
+        "getLaunchIntentForPackage",
+        "(Ljava/lang/String;)Landroid/content/Intent;",
+        packageName.object<jstring>()
+        );
+
+    if (!launchIntent.isValid()) {
+        qWarning() << "No se pudo obtener el Intent de lanzamiento.";
+        return;
+    }
+
+    // Limpiar tareas anteriores para evitar duplicar pilas de actividades
+    jint intentFlags = 0x4000000 | 0x10000000 | 0x00008000; // CLEAR_TASK | NEW_TASK | CLEAR_TOP
+    launchIntent.callObjectMethod("addFlags", "(I)Landroid/content/Intent;", intentFlags);
+
+    // 3. Crear el PendingIntent
+    jint pendingFlags = 0x04000000 | 0x08000000; // FLAG_IMMUTABLE | FLAG_UPDATE_CURRENT
+    QJniObject pendingIntent = QJniObject::callStaticObjectMethod(
+        "android/app/PendingIntent",
+        "getActivity",
+        "(Landroid/content/Context;ILandroid/content/Intent;I)Landroid/app/PendingIntent;",
+        context.object<jobject>(),
+        0,
+        launchIntent.object<jobject>(),
+        pendingFlags
+        );
+
+    if (!pendingIntent.isValid()) {
+        qWarning() << "No se pudo crear el PendingIntent.";
+    } else {
+        // 4. Configurar el AlarmManager para que dispare el arranque en 400 ms
+        QJniObject alarmManager = context.callObjectMethod(
+            "getSystemService",
+            "(Ljava/lang/String;)Ljava/lang/Object;",
+            QJniObject::fromString("alarm").object<jstring>()
+            );
+
+        if (alarmManager.isValid()) {
+            jlong currentTime = QJniObject::callStaticMethod<jlong>("java/lang/System", "currentTimeMillis");
+            jlong triggerTime = currentTime + 400;
+            jint alarmType = 0; // AlarmManager.RTC
+
+            alarmManager.callMethod<void>(
+                "set",
+                "(IJLandroid/app/PendingIntent;)V",
+                alarmType,
+                triggerTime,
+                pendingIntent.object<jobject>()
+                );
+            qDebug() << "Alarma de sistema configurada con éxito.";
         }
+    }
 
-        // Usamos QProcess::startDetached() que es no bloqueante y adecuado para esto.
-        bool started = QProcess::startDetached(applicationPath, args, finalWorkingDirectory);
-
-        if (started) {
-            qDebug() << "Proceso de reinicio iniciado exitosamente.";
-            //emit restartAttempted(true, "Reinicio exitoso.");
-
-            // *** CAMBIO CLAVE AQUÍ ***
-            // Retrasar el cierre de la aplicación actual para dar tiempo al nuevo proceso a independizarse.
-            // Unos pocos milisegundos suelen ser suficientes.
-            QTimer::singleShot(5000, QCoreApplication::instance(), &QCoreApplication::quit);
-            // Opcional: Si necesitas un retardo más garantizado (aunque bloqueante para la UI en este hilo)
-            // QThread::msleep(200); // Bloquea el hilo actual por 200 ms
-            // QCoreApplication::quit(); // Luego, cierra la aplicación
-        } else {
-            qWarning() << "Fallo al iniciar el proceso de reinicio.";
-            //emit restartAttempted(false, "Fallo al iniciar el proceso de reinicio.");
-        }
+    // 5. Cierre suave: En lugar de matar el proceso por la fuerza con std::exit,
+    // programamos la salida de Qt a través del event loop unos milisegundos después
+    // para que el motor gráfico cierre sus hilos ordenadamente.
+    QTimer::singleShot(100, []() {
+        QCoreApplication::quit();
+    });
 }
+
 void UL::restartApp()
 {
 
