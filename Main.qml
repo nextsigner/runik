@@ -28,6 +28,7 @@ Window {
     visible: true
     title: !isRunikStart?"Runik":"Runik!"
     color: apps.backgroundColor
+    property bool dev: false
     property int fs: width*0.035
     property var uAppsList: []
     property bool isRunikStart: false
@@ -157,7 +158,18 @@ Window {
                         }else{
                             folder=unikObj.getPath(4)+'/runik'
                         }
+
+                        /*
+                        let folder='???'
+                        let url='???'
+                        let m0
+                        */
+
                         let folderQml=folder+'/'+unikObj.cProject+'-main'
+                        if(tiAppId.text.indexOf('https')===0){
+                            m0=tiAppId.text.split('/')
+                            folder=unikObj.getPath(3)+'/runik/'+m0[m0.length-1]+'-main'
+                        }
                         let mainFile=folderQml+'/main.qml'
                         if(unikObj.folderExist(folderQml) && unikObj.fileExist(folderQml+'/main.qml')){
                             if(unikObj.folderExist(folderQml+'/modules')){
@@ -258,7 +270,8 @@ Window {
                     text: "Modo Desarrollador"
                     font.pixelSize: app.fs
                     onClicked: {
-                        unikObj.restart(["-dev"], unikObj.currentFolderPath())
+                        app.dev=!app.dev
+                        //unikObj.restart(["-dev"], unikObj.currentFolderPath())
                         //unikObj.restartApp()
                     }
                 }

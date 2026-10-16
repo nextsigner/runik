@@ -1,1 +1,1 @@
-i7: Se agregan permisos de camaras
+i7: Se optimiza el botón cargar
