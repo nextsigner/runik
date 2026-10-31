@@ -51,6 +51,7 @@ Window {
             //}
         }
     }
+
     Rectangle{
         id: xApp
         color: 'transparent'

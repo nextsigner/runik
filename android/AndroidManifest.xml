@@ -14,11 +14,16 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- Si apuntas a Android 14 o superior (API 34+), también se requiere este: -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
     <!-- Permiso general de cámara -->
-    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Declaración independiente de características de hardware (Evita el bloqueo del sensor principal) -->
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.camera.front" android:required="false" />
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="true" />
+
+    <!-- Soporte para texturas de video en OpenGL/Vulkan (Vital para evitar congelamientos en QML VideoOutput) -->
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
     <!-- Micrófono -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
