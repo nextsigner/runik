@@ -264,7 +264,240 @@ public:
 #endif
     }
 
-    //-->Variables
+    //Funciones JNI
+//     Q_INVOKABLE void createRunikDesktopShortcut(const QString &shortcutId, const QString &shortLabel, const QString &paramValue, const QString iconPath) {
+// #if defined(Q_OS_ANDROID)
+//         // 1. Obtener contexto
+//         QJniObject context = QNativeInterface::QAndroidApplication::context();
+//         if (!context.isValid()) {
+//             qWarning() << "Error: Contexto de Android no válido.";
+//             return;
+//         }
+
+//         // 2. Verificar si el launcher soporta fijar accesos directos (Pin Shortcuts)
+//         QJniObject shortcutManager = context.callObjectMethod(
+//             "getSystemService",
+//             "(Ljava/lang/String;)Ljava/lang/Object;",
+//             QJniObject::fromString("shortcut").object<jstring>()
+//             );
+
+//         if (!shortcutManager.isValid()) {
+//             qWarning() << "Error: ShortcutManager no disponible.";
+//             return;
+//         }
+
+//         jboolean isPinSupported = shortcutManager.callMethod<jboolean>("isRequestPinShortcutSupported", "()Z");
+//         if (!isPinSupported) {
+//             qWarning() << "Aviso: Este Launcher no soporta la creación de accesos directos mediante Pin.";
+//             return;
+//         }
+
+//         // 3. Crear el Intent utilizando el método getClass() del contexto actual (Sin hardcodear strings de rutas)
+//         QJniObject javaClass = context.callObjectMethod("getClass", "()Ljava/lang/Class;");
+//         if (!javaClass.isValid()) {
+//             qWarning() << "Error: No se pudo obtener la clase de la actividad actual.";
+//             return;
+//         }
+
+//         QJniObject intent("android/content/Intent", "(Landroid/content/Context;Ljava/lang/Class;)V",
+//                           context.object(), javaClass.object());
+
+//         intent.callObjectMethod("setAction", "(Ljava/lang/String;)Landroid/content/Intent;",
+//                                 QJniObject::fromString("android.intent.action.VIEW").object<jstring>());
+
+//         intent.callObjectMethod("putExtra", "(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;",
+//                                 QJniObject::fromString("runik_param").object<jstring>(),
+//                                 QJniObject::fromString(paramValue).object<jstring>());
+
+
+//         // ... (después de configurar el setIntent en el builder)
+
+
+
+//         // 4. Construir el ShortcutInfo
+//         QJniObject builder("android/content/pm/ShortcutInfo$Builder", "(Landroid/content/Context;Ljava/lang/String;)V",
+//                            context.object(), QJniObject::fromString(shortcutId).object<jstring>());
+
+//         builder.callObjectMethod("setShortLabel", "(Ljava/lang/CharSequence;)Landroid/content/pm/ShortcutInfo$Builder;",
+//                                  QJniObject::fromString(shortLabel).object<jstring>());
+
+//         builder.callObjectMethod("setIntent", "(Landroid/content/Intent;)Landroid/content/pm/ShortcutInfo$Builder;",
+//                                  intent.object());
+
+//         // Opcional: Asignar un icono personalizado desde una ruta de archivo local
+//         //QString iconPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/tu_icono.png"; // O la ruta absoluta donde tengas la imagen
+
+//         QJniObject javaIconPath = QJniObject::fromString(iconPath);
+//         QJniObject androidIcon = QJniObject::callStaticObjectMethod(
+//             "android/graphics/drawable/Icon",
+//             "createWithFilePath",
+//             "(Ljava/lang/String;)Landroid/graphics/drawable/Icon;",
+//             javaIconPath.object()
+//             );
+
+//         if (androidIcon.isValid()) {
+//             builder.callObjectMethod(
+//                 "setIcon",
+//                 "(Landroid/graphics/drawable/Icon;)Landroid/content/pm/ShortcutInfo$Builder;",
+//                 androidIcon.object()
+//                 );
+//             qDebug() << ">>> Icono personalizado cargado desde:" << iconPath;
+//         } else {
+//             qWarning() << ">>> No se pudo cargar el icono desde la ruta especificada, se usará el predeterminado.";
+//         }
+
+//         QJniObject shortcutInfo = builder.callObjectMethod("build", "()Landroid/content/pm/ShortcutInfo;");
+//         if (!shortcutInfo.isValid()) {
+//             qWarning() << "Error: No se pudo construir el ShortcutInfo.";
+//             return;
+//         }
+
+//         // 5. Solicitar a Android que fije el acceso directo en el escritorio
+//         jboolean success = shortcutManager.callMethod<jboolean>(
+//             "requestPinShortcut",
+//             "(Landroid/content/pm/ShortcutInfo;Landroid/content/IntentSender;)Z",
+//             shortcutInfo.object(),
+//             static_cast<jobject>(nullptr)
+//             );
+
+//         if (success) {
+//             qDebug() << ">>> ÉXITO: Solicitud de acceso directo de escritorio enviada correctamente.";
+//         } else {
+//             qWarning() << ">>> RECHAZADO: El launcher o el sistema denegaron la creación del acceso directo.";
+//         }
+// #else
+//         Q_UNUSED(shortcutId);
+//         Q_UNUSED(shortLabel);
+//         Q_UNUSED(paramValue);
+// #endif
+//     }
+
+//     //-->Variables
+
+    Q_INVOKABLE void createRunikDesktopShortcut(const QString &shortcutId, const QString &shortLabel, const QString &paramValue, const QString &iconResourcePath) {
+#if defined(Q_OS_ANDROID)
+        // 1. Obtener contexto
+        QJniObject context = QNativeInterface::QAndroidApplication::context();
+        if (!context.isValid()) {
+            qWarning() << "Error: Contexto de Android no válido.";
+            return;
+        }
+
+        // 2. Verificar si el launcher soporta fijar accesos directos
+        QJniObject shortcutManager = context.callObjectMethod(
+            "getSystemService",
+            "(Ljava/lang/String;)Ljava/lang/Object;",
+            QJniObject::fromString("shortcut").object<jstring>()
+            );
+
+        if (!shortcutManager.isValid()) {
+            qWarning() << "Error: ShortcutManager no disponible.";
+            return;
+        }
+
+        jboolean isPinSupported = shortcutManager.callMethod<jboolean>("isRequestPinShortcutSupported", "()Z");
+        if (!isPinSupported) {
+            qWarning() << "Aviso: Este Launcher no soporta la creación de accesos directos mediante Pin.";
+            return;
+        }
+
+        // 3. Extraer la imagen desde los recursos de Qt (qrc) a una ruta interna accesible
+        QString internalDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        QDir().mkpath(internalDir);
+        QString localIconPath = internalDir + "/shortcut_logo.png";
+
+        // Asegurar formato correcto del recurso (ej: ":/logo.png")
+        QString resourceToCopy = iconResourcePath;
+        if (resourceToCopy.startsWith("qrc:")) {
+            resourceToCopy.remove(0, 3); // Cambia "qrc:/logo.png" a ":/logo.png"
+        } else if (!resourceToCopy.startsWith(":")) {
+            resourceToCopy = ":" + resourceToCopy;
+        }
+
+        // Sobrescribir siempre para asegurar que esté actualizado
+        if (QFile::exists(localIconPath)) {
+            QFile::remove(localIconPath);
+        }
+
+        if (QFile::copy(resourceToCopy, localIconPath)) {
+            qDebug() << ">>> Icono extraído correctamente desde qrc a:" << localIconPath;
+        } else {
+            qWarning() << ">>> ADVERTENCIA: No se pudo copiar el recurso" << resourceToCopy << ". Verifica que esté en el .qrc";
+        }
+
+        // 4. Crear el objeto Icon de Android usando la ruta interna privada
+        QJniObject javaIconPath = QJniObject::fromString(localIconPath);
+        QJniObject androidIcon = QJniObject::callStaticObjectMethod(
+            "android/graphics/drawable/Icon",
+            "createWithFilePath",
+            "(Ljava/lang/String;)Landroid/graphics/drawable/Icon;",
+            javaIconPath.object()
+            );
+
+        // 5. Crear el Intent
+        QJniObject javaClass = context.callObjectMethod("getClass", "()Ljava/lang/Class;");
+        if (!javaClass.isValid()) {
+            qWarning() << "Error: No se pudo obtener la clase de la actividad actual.";
+            return;
+        }
+
+        QJniObject intent("android/content/Intent", "(Landroid/content/Context;Ljava/lang/Class;)V",
+                          context.object(), javaClass.object());
+
+        intent.callObjectMethod("setAction", "(Ljava/lang/String;)Landroid/content/Intent;",
+                                QJniObject::fromString("android.intent.action.VIEW").object<jstring>());
+
+        intent.callObjectMethod("putExtra", "(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;",
+                                QJniObject::fromString("runik_param").object<jstring>(),
+                                QJniObject::fromString(paramValue).object<jstring>());
+
+        // 6. Construir el ShortcutInfo
+        QJniObject builder("android/content/pm/ShortcutInfo$Builder", "(Landroid/content/Context;Ljava/lang/String;)V",
+                           context.object(), QJniObject::fromString(shortcutId).object<jstring>());
+
+        builder.callObjectMethod("setShortLabel", "(Ljava/lang/CharSequence;)Landroid/content/pm/ShortcutInfo$Builder;",
+                                 QJniObject::fromString(shortLabel).object<jstring>());
+
+        builder.callObjectMethod("setIntent", "(Landroid/content/Intent;)Landroid/content/pm/ShortcutInfo$Builder;",
+                                 intent.object());
+
+        if (androidIcon.isValid()) {
+            builder.callObjectMethod(
+                "setIcon",
+                "(Landroid/graphics/drawable/Icon;)Landroid/content/pm/ShortcutInfo$Builder;",
+                androidIcon.object()
+                );
+            qDebug() << ">>> Icono personalizado asignado correctamente al shortcut.";
+        }
+
+        QJniObject shortcutInfo = builder.callObjectMethod("build", "()Landroid/content/pm/ShortcutInfo;");
+        if (!shortcutInfo.isValid()) {
+            qWarning() << "Error: No se pudo construir el ShortcutInfo.";
+            return;
+        }
+
+        // 7. Solicitar a Android que fije el acceso directo
+        jboolean success = shortcutManager.callMethod<jboolean>(
+            "requestPinShortcut",
+            "(Landroid/content/pm/ShortcutInfo;Landroid/content/IntentSender;)Z",
+            shortcutInfo.object(),
+            static_cast<jobject>(nullptr)
+            );
+
+        if (success) {
+            qDebug() << ">>> ÉXITO: Solicitud de acceso directo de escritorio enviada correctamente.";
+        } else {
+            qWarning() << ">>> RECHAZADO: El launcher o el sistema denegaron la creación del acceso directo.";
+        }
+#else
+        Q_UNUSED(shortcutId);
+        Q_UNUSED(shortLabel);
+        Q_UNUSED(paramValue);
+        Q_UNUSED(iconResourcePath);
+#endif
+    }
+
+
     QString initStdString;
     bool debugLog;
     QStringList uErrors;

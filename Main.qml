@@ -45,9 +45,13 @@ Window {
         target: qmlErrorLogger
         onMessagesChanged:{
             //if(Qt.platform.os==='linux' && app.enableQmlErrorLog && apps.dev && ap){
-                //app.flags=Qt.Window
-                //app.visibility="Maximized"
-                log.text+=''+qmlErrorLogger.messages[qmlErrorLogger.messages.length-1]+'<br>'
+            //app.flags=Qt.Window
+            //app.visibility="Maximized"
+            let msg=qmlErrorLogger.messages[qmlErrorLogger.messages.length-1]
+            if(msg.indexOf('22Failed ')<0){
+                log.text+=''+msg+'<br>'
+            }
+
             //}
         }
     }
@@ -176,6 +180,7 @@ Window {
                             if(unikObj.folderExist(folderQml+'/modules')){
                                 unik.addImportPath(folderQml+'/modules')
                             }
+                            unikObj.cd(folderQml)
                             engine.load(mainFile)
                             if(tiAppId.text!=='0' && app.isRunikStart){
                                 apps.uIdApp=tiAppId.text
@@ -267,6 +272,24 @@ Window {
             Row{
                 spacing: app.fs*0.5
                 anchors.horizontalCenter: parent.horizontalCenter
+                Button{
+                    text: "Crear Icono"
+                    font.pixelSize: app.fs
+                    onClicked: {
+                        if(tiAppId.text===''){
+                            log.text+='No se ha creado el ícono porque no hay ningúna app en el campo de texto.<br>'
+                            return
+                        }
+                        let iconPath=':/logo.png'//unikObj.getPath(3)+'/runik/logo.png'
+                        let m0=tiAppId.text.split('/')
+                        let idSubApp=''+m0[m0.length-1]
+
+                        let idIcon='runik_'+idSubApp
+                        let label=idSubApp//'runik222'
+                        unikObj.createRunikDesktopShortcut(idIcon, label, 'param2=3', iconPath)
+                        console.log("Acceso directo solicitado desde QML de forma segura.")
+                    }
+                }
                 Button{
                     text: "Modo Desarrollador"
                     font.pixelSize: app.fs
@@ -527,7 +550,18 @@ Window {
     //     interval: 5000
     //     onTriggered: unik.speak('Hola. Aplicación runik iniciada.')
     // }
+    /*Timer {
+        id: shortcutTimer
+        interval: 5000
+        repeat: false
+        onTriggered: {
+            //unikObj.createRunikShortcut('runik1', 'ShortCut1', 'param1=2')
+            //unikObj.createRunikDesktopShortcut('runik1', 'runik111', 'param2=3')
+            //console.log("Acceso directo solicitado desde QML de forma segura.")
+        }
+    }*/
     Component.onCompleted: {
+
         //apps.autoLoad=false
 
 
