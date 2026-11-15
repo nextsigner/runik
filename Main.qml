@@ -48,7 +48,7 @@ Window {
             //app.flags=Qt.Window
             //app.visibility="Maximized"
             let msg=qmlErrorLogger.messages[qmlErrorLogger.messages.length-1]
-            if(msg.indexOf('22Failed ')<0){
+            if(msg.indexOf('Failed to start frame')<0){
                 log.text+=''+msg+'<br>'
             }
 
@@ -71,7 +71,15 @@ Window {
             spacing: app.fs*0.5
             width: xApp.width*0.5
             anchors.centerIn: parent
+            Image{
+                id: iconApp
+                width: app.fs*6
+                height: width
+                //source: 'assets:/imgs/logo.png'
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
             Text{
+                id: tit
                 text: app.title
                 font.pixelSize: app.fs*3
                 color: apps.fontColor
@@ -280,14 +288,30 @@ Window {
                             log.text+='No se ha creado el ícono porque no hay ningúna app en el campo de texto.<br>'
                             return
                         }
-                        let iconPath=':/logo.png'//unikObj.getPath(3)+'/runik/logo.png'
                         let m0=tiAppId.text.split('/')
                         let idSubApp=''+m0[m0.length-1]
 
+                        let pathIcon1=unikObj.getPath(3)+'/runik/'+idSubApp+'-main/logo.png'
+                        let pathIcon2=unikObj.getPath(4)+'/logo.png'
+                        let iconoCopiado=unikObj.cpFile(pathIcon1, pathIcon2)
+                        if(iconoCopiado){
+                            //iconApp.source='file://'+pathIcon2
+                            //log.text+='Icono copiado!<br>'+pathIcon2
+                            //console.log('Icono copiado!<br>'+pathIcon2)
+                        }
+                        let iconPath
+                        if(unikObj.fileExist(pathIcon2)){
+                            iconPath=pathIcon2
+                        }else{
+                            iconPath=unikObj.getPath(3)+'/runik/logo.png'
+                        }
+
+
                         let idIcon='runik_'+idSubApp
-                        let label=idSubApp//'runik222'
-                        unikObj.createRunikDesktopShortcut(idIcon, label, 'param2=3', iconPath)
-                        console.log("Acceso directo solicitado desde QML de forma segura.")
+                        let label=idSubApp
+                        let label2 = label.charAt(0).toUpperCase() + label.slice(1);
+                        let params='folder='+unikObj.getPath(3)+'/runik/'+label+'-main'
+                        unikObj.createRunikDesktopShortcut(idIcon, label2, params, iconPath)
                     }
                 }
                 Button{
@@ -525,8 +549,10 @@ Window {
             height: parent.height
             contentWidth: width
             contentHeight: log.contentHeight
+            anchors.top: parent.top
             Text{
                 id: log
+                text:'<br><br><br><br><h1>Salida</h1>'
                 width: xLog.width-app.fs
                 color: apps.fontColor
                 wrapMode: Text.WordWrap
@@ -561,6 +587,41 @@ Window {
         }
     }*/
     Component.onCompleted: {
+        let folder
+        let mainPath
+
+        let param = unikObj.getRunikLaunchParameter();
+        if (param !== "") {
+            console.log(">>> La app se abrió desde un acceso directo con el parámetro:", param);
+
+            tit.text='Parámetros:\n'+param
+            tit.font.pixelSize=app.fs*0.5
+            let m00=param.split('|')
+            for(var i0=0; i0 < m00.length; i0++){
+                let arg=m00[i0]
+                if(arg.indexOf('folder=')>=0){
+                    let mArg=arg.split('folder=')
+                    folder=mArg=mArg[1]
+                    mainPath=folder+'/main.qml'
+                    unikObj.cd(folder)
+                    engine.load(mainPath)
+                    app.close()
+                }
+            }
+
+            //txtDato.visible=true
+            return
+        } else {
+            console.log(">>> La app se abrió de forma normal (sin parámetros de shortcut).");
+        }
+        let pathIcon1=unikObj.getPath(3)+'/runik/logo.png'
+        let pathIcon2=unikObj.getPath(4)+'/logo.png'
+        let iconoCopiado=unikObj.cpFile(pathIcon1, pathIcon2)
+        if(iconoCopiado){
+            iconApp.source='file://'+pathIcon2
+            log.text+='Icono copiado!<br>'+pathIcon2
+            console.log('Icono copiado!<br>'+pathIcon2)
+        }
 
         //apps.autoLoad=false
 
@@ -582,7 +643,7 @@ Window {
         //console.log('Ejecutando en: '+unikObj.currentFolderName()
         //app.isRunikStart=unikObj.currentFolderName().indexOf('runik-start')>=0
         if(Qt.application.arguments.toString().indexOf('-folder')>=0){
-            let folder=''
+            folder=''
             for(var i=0;i<Qt.application.arguments.length;i++){
                 let arg=Qt.application.arguments[i]
                 if(arg.indexOf('-folder=')===0){
@@ -591,8 +652,9 @@ Window {
                     break
                 }
             }
-            let mainPath=folder+'/main.qml'
+            mainPath=folder+'/main.qml'
             if(unikObj.fileExist(mainPath)){
+                unikObj.cd(folder)
                 engine.load(mainPath)
                 app.close()
                 return

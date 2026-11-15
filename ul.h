@@ -372,9 +372,10 @@ public:
 // #endif
 //     }
 
-//     //-->Variables
+//
 
-    Q_INVOKABLE void createRunikDesktopShortcut(const QString &shortcutId, const QString &shortLabel, const QString &paramValue, const QString &iconResourcePath) {
+
+    Q_INVOKABLE void createRunikDesktopShortcut(const QString &shortcutId, const QString &shortLabel, const QString &paramValue, const QString &iconPath) {
 #if defined(Q_OS_ANDROID)
         // 1. Obtener contexto
         QJniObject context = QNativeInterface::QAndroidApplication::context();
@@ -401,40 +402,39 @@ public:
             return;
         }
 
-        // 3. Extraer la imagen desde los recursos de Qt (qrc) a una ruta interna accesible
-        QString internalDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-        QDir().mkpath(internalDir);
-        QString localIconPath = internalDir + "/shortcut_logo.png";
+        // 3. Cargar la imagen desde el archivo de caché indicado por iconPath usando BitmapFactory
+        QJniObject androidIcon;
+        if (!iconPath.isEmpty() && QFile::exists(iconPath)) {
+            // Asegurar formato de ruta local limpia para Android
+            QString cleanPath = iconPath;
+            if (cleanPath.startsWith("file://")) {
+                cleanPath.remove(0, 7);
+            }
 
-        // Asegurar formato correcto del recurso (ej: ":/logo.png")
-        QString resourceToCopy = iconResourcePath;
-        if (resourceToCopy.startsWith("qrc:")) {
-            resourceToCopy.remove(0, 3); // Cambia "qrc:/logo.png" a ":/logo.png"
-        } else if (!resourceToCopy.startsWith(":")) {
-            resourceToCopy = ":" + resourceToCopy;
-        }
+            QJniObject jPath = QJniObject::fromString(cleanPath);
+            QJniObject bitmap = QJniObject::callStaticObjectMethod(
+                "android/graphics/BitmapFactory",
+                "decodeFile",
+                "(Ljava/lang/String;)Landroid/graphics/Bitmap;",
+                jPath.object()
+                );
 
-        // Sobrescribir siempre para asegurar que esté actualizado
-        if (QFile::exists(localIconPath)) {
-            QFile::remove(localIconPath);
-        }
-
-        if (QFile::copy(resourceToCopy, localIconPath)) {
-            qDebug() << ">>> Icono extraído correctamente desde qrc a:" << localIconPath;
+            if (bitmap.isValid()) {
+                androidIcon = QJniObject::callStaticObjectMethod(
+                    "android/graphics/drawable/Icon",
+                    "createWithBitmap",
+                    "(Landroid/graphics/Bitmap;)Landroid/graphics/drawable/Icon;",
+                    bitmap.object()
+                    );
+                qDebug() << ">>> Icono cargado exitosamente desde el caché:" << cleanPath;
+            } else {
+                qWarning() << ">>> ADVERTENCIA: No se pudo decodificar el Bitmap desde la ruta:" << cleanPath;
+            }
         } else {
-            qWarning() << ">>> ADVERTENCIA: No se pudo copiar el recurso" << resourceToCopy << ". Verifica que esté en el .qrc";
+            qWarning() << ">>> ADVERTENCIA: iconPath está vacío o el archivo no existe en:" << iconPath;
         }
 
-        // 4. Crear el objeto Icon de Android usando la ruta interna privada
-        QJniObject javaIconPath = QJniObject::fromString(localIconPath);
-        QJniObject androidIcon = QJniObject::callStaticObjectMethod(
-            "android/graphics/drawable/Icon",
-            "createWithFilePath",
-            "(Ljava/lang/String;)Landroid/graphics/drawable/Icon;",
-            javaIconPath.object()
-            );
-
-        // 5. Crear el Intent
+        // 4. Crear el Intent
         QJniObject javaClass = context.callObjectMethod("getClass", "()Ljava/lang/Class;");
         if (!javaClass.isValid()) {
             qWarning() << "Error: No se pudo obtener la clase de la actividad actual.";
@@ -451,7 +451,7 @@ public:
                                 QJniObject::fromString("runik_param").object<jstring>(),
                                 QJniObject::fromString(paramValue).object<jstring>());
 
-        // 6. Construir el ShortcutInfo
+        // 5. Construir el ShortcutInfo
         QJniObject builder("android/content/pm/ShortcutInfo$Builder", "(Landroid/content/Context;Ljava/lang/String;)V",
                            context.object(), QJniObject::fromString(shortcutId).object<jstring>());
 
@@ -476,7 +476,7 @@ public:
             return;
         }
 
-        // 7. Solicitar a Android que fije el acceso directo
+        // 6. Solicitar a Android que fije el acceso directo
         jboolean success = shortcutManager.callMethod<jboolean>(
             "requestPinShortcut",
             "(Landroid/content/pm/ShortcutInfo;Landroid/content/IntentSender;)Z",
@@ -493,11 +493,12 @@ public:
         Q_UNUSED(shortcutId);
         Q_UNUSED(shortLabel);
         Q_UNUSED(paramValue);
-        Q_UNUSED(iconResourcePath);
+        Q_UNUSED(iconPath);
 #endif
     }
 
 
+    //--->Variables
     QString initStdString;
     bool debugLog;
     QStringList uErrors;
@@ -517,6 +518,70 @@ public:
     Q_INVOKABLE bool folderExist(const QString &path);
     Q_INVOKABLE bool fileExist(QByteArray fileName);
     Q_INVOKABLE QList<QString> getFileList(QByteArray folder, const QStringList types);
+    Q_INVOKABLE bool cpFile(const QString &origen, const QString &destino) {
+        // 1. Verificar si el archivo de origen existe
+        if (!QFile::exists(origen)) {
+            qWarning() << ">>> cpFile Error: El archivo de origen no existe:" << origen;
+            return false;
+        }
+
+        // 2. Asegurarse de que el directorio de destino exista
+        QFileInfo destFileInfo(destino);
+        QDir destDir = destFileInfo.dir();
+        if (!destDir.exists()) {
+            if (!destDir.mkpath(".")) {
+                qWarning() << ">>> cpFile Error: No se pudo crear el directorio de destino:" << destDir.path();
+                return false;
+            }
+        }
+
+        // 3. Si ya existe un archivo en el destino, eliminarlo para permitir la sobrescritura limpia
+        if (QFile::exists(destino)) {
+            if (!QFile::remove(destino)) {
+                qWarning() << ">>> cpFile Error: No se pudo sobrescribir/eliminar el archivo existente en destino:" << destino;
+                return false;
+            }
+        }
+
+        // 4. Ejecutar la copia
+        if (QFile::copy(origen, destino)) {
+            qDebug() << ">>> cpFile ÉXITO: Archivo copiado correctamente de" << origen << "a" << destino;
+            return true;
+        } else {
+            qWarning() << ">>> cpFile Error: Falló la operación QFile::copy.";
+            return false;
+        }
+    }
+    Q_INVOKABLE QString getRunikLaunchParameter() {
+#if defined(Q_OS_ANDROID)
+        QJniObject context = QNativeInterface::QAndroidApplication::context();
+        if (!context.isValid()) return QString();
+
+        // Obtener la Activity actual
+        QJniObject activity = QJniObject::callStaticObjectMethod(
+            "org/qtproject/qt/android/QtNative",
+            "activity",
+            "()Landroid/app/Activity;"
+            );
+        if (!activity.isValid()) return QString();
+
+        // Obtener el Intent que inició la actividad
+        QJniObject intent = activity.callObjectMethod("getIntent", "()Landroid/content/Intent;");
+        if (!intent.isValid()) return QString();
+
+        // Leer el extra "runik_param" que definimos al crear el shortcut
+        QJniObject jParam = intent.callObjectMethod(
+            "getStringExtra",
+            "(Ljava/lang/String;)Ljava/lang/String;",
+            QJniObject::fromString("runik_param").object<jstring>()
+            );
+
+        if (jParam.isValid()) {
+            return jParam.toString();
+        }
+#endif
+        return QString();
+    }
     Q_INVOKABLE bool isStorageManagerGranted();
     Q_INVOKABLE void checkPermissions();
 #ifdef Q_OS_ANDROID
