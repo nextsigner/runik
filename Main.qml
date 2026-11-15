@@ -49,7 +49,7 @@ Window {
             //app.visibility="Maximized"
             let msg=qmlErrorLogger.messages[qmlErrorLogger.messages.length-1]
             if(msg.indexOf('Failed to start frame')<0){
-                log.text+=''+msg+'<br>'
+                log.text+=''+msg+'\n'
             }
 
             //}
@@ -268,11 +268,11 @@ Window {
                             m0=tiAppId.text.split('/')
                             folder=unikObj.getPath(3)+'/runik/'+m0[m0.length-1]+'-main'
                         }
-                        log.text+='Existe carpeta: '+(unikObj.folderExist(folder)?'SI':'NO')+'<br>'
-                        log.text+='Eliminando carpeta: '+folder+'<br>'
+                        log.text+='Existe carpeta: '+(unikObj.folderExist(folder)?'SI':'NO')+'\n'
+                        log.text+='Eliminando carpeta: '+folder+'\n'
                         let archivos=unikObj.getFileList(folder, '*')
-                        log.text+='Archivos pre existentes: '+(''+archivos).split(',').join('<br>')
-                        log.text+='<br>Carpeta eliminada: '+(unikObj.deleteFolder(folder)?'SI':'NO')+'<br>'
+                        log.text+='Archivos pre existentes: '+(''+archivos).split(',').join('\n')
+                        log.text+='\nCarpeta eliminada: '+(unikObj.deleteFolder(folder)?'SI':'NO')+'\n'
                         log.text+='Archivos existentes: '+unikObj.getFileList(folder, '*')
                     }
                 }
@@ -285,7 +285,7 @@ Window {
                     font.pixelSize: app.fs
                     onClicked: {
                         if(tiAppId.text===''){
-                            log.text+='No se ha creado el ícono porque no hay ningúna app en el campo de texto.<br>'
+                            log.text+='No se ha creado el ícono porque no hay ningúna app en el campo de texto.\n'
                             return
                         }
                         let m0=tiAppId.text.split('/')
@@ -296,8 +296,8 @@ Window {
                         let iconoCopiado=unikObj.cpFile(pathIcon1, pathIcon2)
                         if(iconoCopiado){
                             //iconApp.source='file://'+pathIcon2
-                            //log.text+='Icono copiado!<br>'+pathIcon2
-                            //console.log('Icono copiado!<br>'+pathIcon2)
+                            //log.text+='Icono copiado!\n'+pathIcon2
+                            //console.log('Icono copiado!\n'+pathIcon2)
                         }
                         let iconPath
                         if(unikObj.fileExist(pathIcon2)){
@@ -552,11 +552,11 @@ Window {
             anchors.top: parent.top
             Text{
                 id: log
-                text:'<br><br><br><br><h1>Salida</h1>'
+                text:'\n\nSalida'
                 width: xLog.width-app.fs
                 color: apps.fontColor
                 wrapMode: Text.WordWrap
-                textFormat: Text.RichText
+                //textFormat: Text.RichText
                 onTextChanged: {
                     if(text!=='')xLog.visible=true
                 }
@@ -594,8 +594,8 @@ Window {
         if (param !== "") {
             console.log(">>> La app se abrió desde un acceso directo con el parámetro:", param);
 
-            tit.text='Parámetros:\n'+param
-            tit.font.pixelSize=app.fs*0.5
+            //tit.text='Parámetros:\n'+param
+            //tit.font.pixelSize=app.fs*0.5
             let m00=param.split('|')
             for(var i0=0; i0 < m00.length; i0++){
                 let arg=m00[i0]
@@ -619,8 +619,8 @@ Window {
         let iconoCopiado=unikObj.cpFile(pathIcon1, pathIcon2)
         if(iconoCopiado){
             iconApp.source='file://'+pathIcon2
-            log.text+='Icono copiado!<br>'+pathIcon2
-            console.log('Icono copiado!<br>'+pathIcon2)
+            log.text+='Icono copiado!\n'+pathIcon2
+            console.log('Icono copiado!\n'+pathIcon2)
         }
 
         //apps.autoLoad=false
