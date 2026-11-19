@@ -1,8 +1,15 @@
 TARGET = runik_exec
 DESTDIR = $$PWD/bin
 
-QT += quick quick3d sql core gui
+QT += quick sql core gui
 QT += network multimedia
+
+QT += quick3d shadertools
+
+android {
+    # Forzar alineación de ELF de 16k para compatibilidad con Android 15/16
+    QMAKE_LFLAGS += -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384
+}
 
 
 # Evita APIs obsoletas

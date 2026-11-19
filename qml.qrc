@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>Main.qml</file>
         <file>logo.png</file>
+        <file>Escena3D.qml</file>
     </qresource>
 </RCC>

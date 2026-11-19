@@ -25,6 +25,9 @@
     <!-- Soporte para texturas de video en OpenGL/Vulkan (Vital para evitar congelamientos en QML VideoOutput) -->
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
 
+    <!-- REQUISITO GRÁFICO 3D -->
+    <uses-feature android:glEsVersion="0x00030000" android:required="true" />
+
     <!-- Micrófono -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-feature android:name="android.hardware.microphone" android:required="false" />

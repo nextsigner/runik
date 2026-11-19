@@ -12,6 +12,7 @@ import Qt.labs.platform
 
 /*
 import Qt.WebSockets
+
 import Qt3D.Animation
 import Qt3D.Core
 import Qt3D.Extras
@@ -28,6 +29,8 @@ Window {
     visible: true
     title: !isRunikStart?"Runik":"Runik!"
     color: apps.backgroundColor
+    property int version: 1
+    property string uParams: ''
     property bool dev: false
     property int fs: width*0.035
     property var uAppsList: []
@@ -92,7 +95,7 @@ Window {
             }
             Text{
                 id: tit
-                text: app.title
+                text: app.title+' v'+app.version
                 font.pixelSize: app.fs*3
                 color: apps.fontColor
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -205,7 +208,8 @@ Window {
                             if(tiAppId.text!=='0' && app.isRunikStart){
                                 apps.uIdApp=tiAppId.text
                             }
-                            app.close()
+                            //app.close()
+                            //app.visible=false
                         }else{
                             msg='No se ha podido descargar '+tiAppId.text+'\n'
                             msg='Hay un error en la url o ha fallado la conexión de internet.\n'
@@ -300,30 +304,82 @@ Window {
                             l('No se ha creado el ícono porque no hay ningúna app en el campo de texto.')
                             return
                         }
+                        let dateMs = new Date(Date.now())
+                        let ms=dateMs.getTime()
                         let m0=tiAppId.text.split('/')
                         let idSubApp=''+m0[m0.length-1]
 
                         let pathIcon1=unikObj.getPath(3)+'/runik/'+idSubApp+'-main/logo.png'
-                        let pathIcon2=unikObj.getPath(4)+'/logo.png'
+                        if(app.dev)l('Copiando archivo '+pathIcon1)
+                        if(app.dev)l('Existe: '+unikObj.fileExist(pathIcon1))
+                        let pathIcon2=unikObj.getPath(4)+'/logo_'+idSubApp+'.png'
+                        if(app.dev)l('Copiando archivo destino: '+pathIcon2)
+                        if(app.dev)l('Existe destino: '+unikObj.fileExist(pathIcon2))
                         let iconoCopiado=unikObj.cpFile(pathIcon1, pathIcon2)
                         if(iconoCopiado){
                             //iconApp.source='file://'+pathIcon2
-                            //l('Icono copiado!\n'+pathIcon2)
+                            if(app.dev)l('Icono copiado!\n'+pathIcon2)
                             //console.log('Icono copiado!\n'+pathIcon2)
                         }
-                        let iconPath
+
+                        /*
+                        let c='import QtQuick\n'
+                        c+='Item{\n'
+                        c+='    Image{\n'
+                        c+='       width:300\n'
+                        c+='       height:300\n'
+                        c+='       source:"file://'+pathIcon2+'"\n'
+                        c+='    }\n'
+                        c+='}\n'
+                        let obj=Qt.createQmlObject(c, xLog, 'codigo1000')
+                        */
+
+                        tMkIcon.v=3
+                        tMkIcon.iconPath=pathIcon2
+                        tMkIcon.idIcon='runik_'+idSubApp+'_'+ms
+                        tMkIcon.label=idSubApp
+                        let label=idSubApp
+                        tMkIcon.label2 = label.charAt(0).toUpperCase() + label.slice(1);
+                        tMkIcon.params='folder='+unikObj.getPath(3)+'/runik/'+label+'-main'
+                        tMkIcon.start()
+                        return
+                        /*let iconPath
                         if(unikObj.fileExist(pathIcon2)){
                             iconPath=pathIcon2
                         }else{
                             iconPath=unikObj.getPath(3)+'/runik/logo.png'
                         }
+                        l('Icono final: '+iconPath)
 
-
-                        let idIcon='runik_'+idSubApp
+                        let idIcon='runik_'+idSubApp+'_'+ms
                         let label=idSubApp
                         let label2 = label.charAt(0).toUpperCase() + label.slice(1);
                         let params='folder='+unikObj.getPath(3)+'/runik/'+label+'-main'
-                        unikObj.createRunikDesktopShortcut(idIcon, label2, params, iconPath)
+                        unikObj.createRunikDesktopShortcut(idIcon, label2, params, iconPath)*/
+                    }                    
+                }
+                Timer{
+                    id: tMkIcon
+                    running: false
+                    repeat: true
+                    interval: 1000
+                    property int v: 3
+                    property string iconPath: ''
+                    property string idIcon: ''
+                    property string label: ''
+                    property string label2: ''
+                    property string params: ''
+                    onTriggered: {
+                        if(tMkIcon.v<=0){
+                            let iconoCreado=unikObj.createRunikDesktopShortcut(tMkIcon.idIcon, tMkIcon.label2, tMkIcon.params, tMkIcon.iconPath)
+                            if(iconoCreado){
+                                l('Ícono creado!')
+                            }else{
+                                l('El icono no ha sido creado.')
+                            }
+                            tMkIcon.stop()
+                        }
+                        tMkIcon.v--
                     }
                 }
                 /*Button{
@@ -342,9 +398,22 @@ Window {
                 spacing: app.fs
                 visible: app.dev
                 Button{
-                    text: 'Probar Log'
+                    text: 'Ver Parámetros'
                     onClicked: {
-                        l('Probando')
+                        let s='Lista de parámetros recibidos por Runik:\n'
+                        let m0=app.uParams.split('|')
+                        s+='Cantidad de parámetros: '+parseInt(m0.length-1)+'\n'
+                        for(var i=0;i<m0.length;i++){
+                           s+=''+m0[i]+'\n'
+                        }
+                        //l('P: ['+app.uParams+']\n')
+                        l(s)
+                    }
+                }
+                Button{
+                    text: '3D!'
+                    onClicked: {
+                        abrirEscena3D()
                     }
                 }
             }
@@ -486,7 +555,28 @@ Window {
         }
     }
 
+    Rectangle{
+        color: apps.backgroundColor
+        anchors.fill: xApp
+        visible: tMkIcon.running
+        Column{
+            spacing: app.fs
+            anchors.centerIn: parent
+            Text{
+                text: 'Creando ícono en'
+                font.pixelSize: app.fs*1.5
+                color: apps.fontColor
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+            Text{
+                text: ''+tMkIcon.v
+                font.pixelSize: app.fs*4
+                color: apps.fontColor
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+        }
 
+    }
     Item {
         Unik {
             id: unikObj
@@ -540,7 +630,8 @@ Window {
                         if(tiAppId.text!=='0' && app.isRunikStart){
                             apps.uIdApp=tiAppId.text
                         }
-                        app.close()
+                        //app.close()
+                        //app.visible=false
                         console.log(msg)
                         statusText.text=msg
 
@@ -558,7 +649,8 @@ Window {
                         if(tiAppId.text!=='0' && app.isRunikStart){
                             apps.uIdApp=tiAppId.text
                         }
-                        app.close()
+                        //app.close()
+                        //app.visible=false
                     }else{
                         msg='No se ha podido descargar '+tiAppId.text+'\n'
                         msg='Hay un error en la url o ha fallado la conexión de internet.\n'
@@ -612,12 +704,17 @@ Window {
             }
         }
     }
-    // Timer{
-    //     running: true
-    //     repeat: true
-    //     interval: 5000
-    //     onTriggered: unik.speak('Hola. Aplicación runik iniciada.')
-    // }
+    Timer{
+        running: true
+        repeat: true
+        interval: 1000
+        onTriggered: {
+            let param = unikObj.getRunikLaunchParameter();
+            if (param !== "" && param !== app.uParams) {
+                procParams(param)
+            }
+        }
+    }
     /*Timer {
         id: shortcutTimer
         interval: 5000
@@ -629,13 +726,13 @@ Window {
         }
     }*/
     Component.onCompleted: {
-        let version=1
-        let nVersionRunikStart=version
+        //let version=1
+        let nVersionRunikStart=app.version
         let versionFp=unikObj.getPath(3)+'/runik/runik-start/version'
         if(unikObj.fileExist(versionFp)){
             nVersionRunikStart=parseInt(unik.getFile(versionFp).replace(/\n/g, ''))
         }
-        if(version>nVersionRunikStart){
+        if(app.version>nVersionRunikStart){
             tiAppId.text="0"
             btnActualizar.run()
             return
@@ -649,24 +746,12 @@ Window {
 
         let param = unikObj.getRunikLaunchParameter();
         if (param !== "") {
+            app.uParams=param
             console.log(">>> La app se abrió desde un acceso directo con el parámetro:", param);
 
             //tit.text='Parámetros:\n'+param
             //tit.font.pixelSize=app.fs*0.5
-            let m00=param.split('|')
-            for(var i0=0; i0 < m00.length; i0++){
-                let arg=m00[i0]
-                if(arg.indexOf('folder=')>=0){
-                    let mArg=arg.split('folder=')
-                    folder=mArg=mArg[1]
-                    mainPath=folder+'/main.qml'
-                    unikObj.cd(folder)
-                    engine.load(mainPath)
-                    app.close()
-                }
-            }
-
-            //txtDato.visible=true
+            procParams(param)
             return
         } else {
             console.log(">>> La app se abrió de forma normal (sin parámetros de shortcut).");
@@ -713,7 +798,8 @@ Window {
             if(unikObj.fileExist(mainPath)){
                 unikObj.cd(folder)
                 engine.load(mainPath)
-                app.close()
+                //app.close()
+                //app.visible=false
                 return
             }else{
                 statusText.text="El archivo "+mainPath+' no existe!'
@@ -762,6 +848,27 @@ Window {
     }
 
 
+    function procParams(param){
+        let m00=param.split('|')
+        for(var i0=0; i0 < m00.length; i0++){
+            let arg=m00[i0]
+            if(arg.indexOf('folder=')>=0){
+                let mArg=arg.split('folder=')
+                let folder=mArg[1]
+                let mainPath=folder+'/main.qml'
+                unikObj.cd(folder)
+                engine.load(mainPath)
+                //app.close()
+                //app.visible=false
+            }
+            if(arg.indexOf('git=')>=0){
+                let mArg=arg.split('git=')
+                tiAppId.text=mArg[1]
+                btnActualizar.run()
+                return
+            }
+        }
+    }
     function l(t){
         log.text+=t+'\n'
         xLog.visible=true
@@ -898,6 +1005,20 @@ Window {
             xHistorial.visible=true
         }
 
+    }
+    function abrirEscena3D() {
+        var comp = Qt.createComponent("qrc:/Escena3D.qml");
+        if (comp.status === Component.Ready) {
+            var obj = comp.createObject(xApp, {
+                "x": 0,
+                "y": 0,
+                "width": xApp.width,
+                "height": xApp.height,
+                "z": 999
+            });
+        } else if (comp.status === Component.Error) {
+            console.error("Error cargando 3D:", comp.errorString());
+        }
     }
 }
 

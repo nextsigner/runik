@@ -1,6 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QtMultimedia>
+#include <QSurfaceFormat>
+#include <QQuickWindow> // <-- Asegúrate de incluir esto
 
 #include "ul.h"
 #include "qmlclipboardadapter.h"
@@ -10,11 +12,23 @@
 
 int main(int argc, char *argv[])
 {
+    // 1. FUERZA el backend gráfico de OpenGL para Quick3D ANTES de crear la app
+    QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+
+    // 2. Formato de superficie obligatorio para evitar el crash del contexto EGL
+    QSurfaceFormat format;
+    format.setDepthBufferSize(24);
+    format.setStencilBufferSize(8);
+    format.setSamples(4);
+    QSurfaceFormat::setDefaultFormat(format);
+
     QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
     QCoreApplication::setOrganizationName("Unikode.org");
-    QCoreApplication::setApplicationName("Zool");
+    QCoreApplication::setApplicationName("Runik");
+
+
     UL u;
     u.setEngine(&engine);
     if(!u.isStorageManagerGranted()){
@@ -30,7 +44,7 @@ int main(int argc, char *argv[])
         presetAppName.append(u.getFile(presetFilePath));
         presetAppName=presetAppName.replace("\n", "");
     }else{
-        presetAppName.append("UniKey");    }
+        presetAppName.append("Runik");    }
 
     qDebug()<<"Runing "<<presetAppName<<"...";
     //<--Preset App Name
@@ -67,6 +81,23 @@ int main(int argc, char *argv[])
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
     //engine.loadFromModule("zoolandv2", "Main");
+    //engine.load("qrc:/Main.qml");
+    // Reemplaza estas líneas al final de tu main.cpp:
+    // engine.load("qrc:/Main.qml");
+
+    // Utiliza la forma recomendada y segura para Qt 6.11 con módulos QML:
+    const QUrl url(QStringLiteral("qrc:/qt/qml/org/unikode/runik/Main.qml"));
+    QObject::connect(
+        &engine,
+        &QQmlApplicationEngine::objectCreated,
+        &app,
+        [url](QObject *obj, const QUrl &objUrl) {
+            if (!obj && url == objUrl)
+                QCoreApplication::exit(-1);
+        },
+        Qt::QueuedConnection);
+
+    //engine.load(url);
     engine.load("qrc:/Main.qml");
 
     return QCoreApplication::exec();
