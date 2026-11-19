@@ -1,1 +1,1 @@
-i7: Funcionó QtQuick3D!
+i7: Se agrega archivo de dependencias para compilar en 3D para Android
